@@ -1,0 +1,11 @@
+{
+  "name": "wyca-tour-svc",
+  "version": "0.0.1",
+  "description": "A simple AMR touring service",
+  "main": "src/WycaTourSvc.js",
+  "scripts": {
+    "test": "mocha --require @babel/register test/setup.js test/specs"
+  },
+  "author": "Wyca",
+  "license": "MIT"
+}
