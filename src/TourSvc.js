@@ -1,10 +1,11 @@
-import { TourPoi } from "./lib/TourPoi"
-import { TourFailure } from "./lib/TourFailure"
+import { TourPoi } from "./lib/TourPoi.js"
+import { TourFailure } from "./lib/TourFailure.js"
 
 /**
  * 
  */
-export class TourSvc {
+export class TourSvc
+{
   #client
   #pois
   #currentPoiIndex
@@ -14,20 +15,23 @@ export class TourSvc {
    * Constructor
    * @param { WycaApiClient } wycaApiClient 
    */
-  constructor (wycaApiClient) {
+  constructor(wycaApiClient)
+  {
     this.#client = wycaApiClient
     this.#currentPoiIndex = -1
     this.#pois = []
     this.TourFailure = null
   }
-  
+
   /**
    * initialize the Tour service with a POI list
    * @param { TourPoi[] } pois - A list of poi
    * @returns { Promise } a Promise wich resolves when the Tour is ready or rejects if something's wrong
    */
-  init (pois) {
-    const poisOkProm = new Promise ((resolve, reject) => {
+  init(pois)
+  {
+    const poisOkProm = new Promise((resolve, reject) =>
+    {
       if (this.#checkPoisExist(pois))
         resolve(true)
       else reject(new TourFailure("Missing POI in current map", true))
@@ -39,14 +43,22 @@ export class TourSvc {
    * Ask the AMR to go to its next destination
    * @return { Promise<TourPoi> | Promise<null> } A Promise wich resolve with the reached POI or null if going to Docking Station
    */
-  async next () {
+  async next()
+  {
     let nextIndex = this.#currentPoiIndex + 1
     if (nextIndex < this.#pois.length)
     {
       // Next POI exists, lets go to next POI
-      return this.#client.GoToPOI(nextIndex).then()
+      return this.#client.GoToPOI(nextIndex)
+      .then(
+        this.#currentPoiIndex ++
+      ).catch((err) =>
+      {
+        
+      })
     }
-    else {
+    else
+    {
       // The AMR reached its last POI and should go to its Docking station
       return this.#client.GoToCharge(-1).then()
     }
@@ -55,22 +67,25 @@ export class TourSvc {
   /**
    * Resume an interrupted tour 
    */
-  async resume () {
-    
+  async resume()
+  {
+    return this.#client.GoToPOI(this.#currentPoiIndex)
   }
 
   /**
-   * Cancel the AMR's current destination
+   * Cancel the AMR's tour
    */
-  cancel () {
-    
+  cancel()
+  {
+
   }
 
   /**
    * 
    * @returns { TourPoi | null } the current POI or null
    */
-  getCurrentPoi () {
+  getCurrentPoi()
+  {
     return this.#currentPoiIndex > 0 ? this.#pois[this.#currentPoiIndex] : null
   }
 
@@ -78,10 +93,11 @@ export class TourSvc {
    * Returns the next Poi or null
    * @returns { TourPoi | null }
    */
-  getNextPoi () {
+  getNextPoi()
+  {
     let nextPoi = null
     let nextIndex = this.#currentPoiIndex + 1
-    if (nextIndex  < this.#pois.length)
+    if (nextIndex < this.#pois.length)
       nextPoi = this.#pois[nextIndex]
     return nextPoi
   }
@@ -90,7 +106,8 @@ export class TourSvc {
    * Return the current tour failure if exists otherwise return null
    * @returns { TourFailure | null }
    */
-  getTourFailure () {
+  getTourFailure()
+  {
     return this.#tourFailure
   }
 
@@ -99,12 +116,14 @@ export class TourSvc {
    * @param { TourPoi[] } pois 
    * @returns { boolean }
    */
-  async #checkPoisExist(pois) {
+  async #checkPoisExist(pois)
+  {
     const mapData = await this.wycaApiClient.getCurrentMapData()
     const poiIds = pois.map((p) => p.id)
     const mapPoiIds = mapData.pois.map((p) => p.id_poi)
     let ok = true
-    for (poi in poiIds) {
+    for (poi in poiIds)
+    {
       if (!mapPoiIds.includes(poi))
         ok = false
     }

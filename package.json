@@ -2,9 +2,13 @@
   "name": "wyca-tour-svc",
   "version": "0.0.1",
   "description": "A simple AMR touring service",
-  "main": "src/WycaTourSvc.js",
+  "type": "module",
+  "main": "src/TourSvc.js",
   "scripts": {
     "test": "mocha --require @babel/register test/setup.js test/specs"
+  },
+  "devDependencies": {
+    "mocha": "10.2.0"
   },
   "author": "Wyca",
   "license": "MIT"
