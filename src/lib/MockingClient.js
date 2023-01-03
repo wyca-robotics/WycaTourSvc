@@ -6,7 +6,7 @@ export class MockingClient
   constructor(options = {})
   {
     const opt = {
-      criticalfailure: flase,
+      criticalfailure: false,
       failOnInit: false,
       failOnDock: false,
       failOnPoiId: -1,
@@ -17,6 +17,10 @@ export class MockingClient
     this.#mapData = {}
   }
 
+  /**
+   * Returns a Promise once initilization is done
+   * @returns {Promise<boolean>}
+   */
   async init()
   {
     if (this.#options.mapDataPath !== "")
@@ -43,7 +47,7 @@ export class MockingClient
   {
     return new Promise((resolve, reject) =>
     {
-      if (this.#option.failOnGotoPoiId === idPoi)
+      if (this.#options.failOnGotoPoiId === idPoi)
       {
         const msg = this.#options.criticalfailure ? "Software Stop error" : "Couldn't reach destination"
         reject(new Error(msg))
@@ -55,7 +59,7 @@ export class MockingClient
           if (this.onGoToPoiResult !== undefined && typeof this.onGoToPoiResult === "function")
           {
             let res = {A: 0x000, M: ""}
-            if (this.#option.failOnPoiId === idPoi)
+            if (this.#options.failOnPoiId === idPoi)
             {
               if (this.#options.criticalfailure)
                 res = { A: 0x001, M: "Software Stop error" }
@@ -74,7 +78,7 @@ export class MockingClient
   {
     return new Promise((resolve, reject) =>
     {
-      if (this.#option.failOnPoiId === idPoi)
+      if (this.#options.failOnPoiId === idPoi)
       {
         const msg = this.#options.criticalfailure ? "Software Stop error" : "Couldn't reach destination"
         reject(new Error(msg))

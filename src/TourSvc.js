@@ -34,10 +34,13 @@ export class TourSvc
     const initProm = new Promise((resolve, reject) =>
     {
       if (this.#checkPoisExist(pois))
+      {
+        this.#pois = pois
         resolve(true)
-      else reject(new TourFailure("Missing POI in current map", true))
+      }
+      else reject(new TourFailure("Missing POI(s) in current map", true))
     })
-    return this.wycaApiClient.init().then(initProm)
+    return this.#client.init().then(initProm)
   }
 
   /**
@@ -126,7 +129,7 @@ export class TourSvc
    */
   async #checkPoisExist(pois)
   {
-    const mapData = await this.wycaApiClient.getCurrentMapData()
+    const mapData = await this.client.getCurrentMapData()
     const poiIds = pois.map((p) => p.id)
     const mapPoiIds = mapData.pois.map((p) => p.id_poi)
     let ok = true
@@ -134,6 +137,8 @@ export class TourSvc
     {
       if (!mapPoiIds.includes(poi))
         ok = false
+      else
+        console.info(poi)
     }
     return ok
   }
