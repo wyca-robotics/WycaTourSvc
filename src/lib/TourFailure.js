@@ -7,9 +7,9 @@ export class TourFailure {
   /**
    * 
    * @param { string } label 
-   * @param { boolean } critical 
+   * @param { boolean } critical
    */
-  constructor (label, critical) {
+  constructor (label, critical=true) {
     this.#label = label
     this.#critical = critical
   }

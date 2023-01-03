@@ -1,6 +1,7 @@
 export class MockingClient
 {
   #options
+  #mapData
 
   constructor(options = {})
   {
@@ -10,13 +11,16 @@ export class MockingClient
       failOnDock: false,
       failOnPoiId: -1,
       failOnGotoPoiId: -1,
-      mapData: {},
+      mapDataPath: "",
     }
     this.#options = { ...opt, ...options }
+    this.#mapData = {}
   }
 
   async init()
   {
+    if (this.#options.mapDataPath !== "")
+      this.#mapData = JSON.parse(await fetch(this.#options.mapDataPath))
     return new Promise((resolve, reject) =>
     {
       if (this.#options.failOnInit)

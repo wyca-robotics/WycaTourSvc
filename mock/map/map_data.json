@@ -1,0 +1,137 @@
+{
+    "areas" : [],
+    "augmented_poses" : [],
+    "docks" : 
+    [
+        {
+            "active" : true,
+            "approch_pose_t" : 0,
+            "approch_pose_x" : 44.289999999999999,
+            "approch_pose_y" : 14.800000000000001,
+            "comment" : "",
+            "fiducial_pose_t" : 3.1415999999999999,
+            "fiducial_pose_x" : 45.049999999999997,
+            "fiducial_pose_y" : 14.800000000000001,
+            "final_pose_t" : 0,
+            "final_pose_x" : 44.789999999999999,
+            "final_pose_y" : 14.800000000000001,
+            "id_docking_station" : 1,
+            "id_docking_station_in_map" : 1,
+            "id_fiducial" : 10,
+            "id_map" : 2,
+            "is_master" : true,
+            "name" : "Dock 1",
+            "num" : 1,
+            "undock_path" : 
+            [
+                {
+                    "angular_distance" : 0,
+                    "linear_distance" : -0.40000000000000002
+                }
+            ]
+        },
+        {
+            "active" : true,
+            "approch_pose_t" : 3.1415999999999999,
+            "approch_pose_x" : 3.1099999999999999,
+            "approch_pose_y" : 17.75,
+            "comment" : "",
+            "fiducial_pose_t" : 0,
+            "fiducial_pose_x" : 2.3500000000000001,
+            "fiducial_pose_y" : 17.75,
+            "final_pose_t" : 3.1415999999999999,
+            "final_pose_x" : 2.6099999999999999,
+            "final_pose_y" : 17.75,
+            "id_docking_station" : 2,
+            "id_docking_station_in_map" : 2,
+            "id_fiducial" : 11,
+            "id_map" : 2,
+            "is_master" : false,
+            "name" : "Dock 2",
+            "num" : 1,
+            "undock_path" : 
+            [
+                {
+                    "angular_distance" : 0,
+                    "linear_distance" : -0.40000000000000002
+                }
+            ]
+        }
+    ],
+    "forbiddens" : [],
+    "id_map" : 2,
+    "landmarks" : [],
+    "pois" : 
+    [
+        {
+            "active" : true,
+            "color" : "",
+            "comment" : "",
+            "final_pose_t" : -3.0060000419616699,
+            "final_pose_x" : 39.794998168945312,
+            "final_pose_y" : 14.154999732971191,
+            "icon" : "",
+            "id_map" : 2,
+            "id_poi" : 12,
+            "id_poi_in_map" : 1,
+            "image" : "",
+            "name" : "POI 1"
+        },
+        {
+            "active" : true,
+            "color" : "",
+            "comment" : "",
+            "final_pose_t" : -0.14900000393390656,
+            "final_pose_x" : 44.71099853515625,
+            "final_pose_y" : 10.711000442504883,
+            "icon" : "",
+            "id_map" : 2,
+            "id_poi" : 13,
+            "id_poi_in_map" : 2,
+            "image" : "",
+            "name" : "POI 2"
+        },
+        {
+            "active" : true,
+            "color" : "",
+            "comment" : "",
+            "final_pose_t" : -3.0699999332427979,
+            "final_pose_x" : 40.137001037597656,
+            "final_pose_y" : 11.194999694824219,
+            "icon" : "",
+            "id_map" : 2,
+            "id_poi" : 14,
+            "id_poi_in_map" : 3,
+            "image" : "",
+            "name" : "POI 3"
+        },
+        {
+            "active" : true,
+            "color" : "",
+            "comment" : "",
+            "final_pose_t" : 0.035000000149011612,
+            "final_pose_x" : 44.695999145507812,
+            "final_pose_y" : 13.015000343322754,
+            "icon" : "",
+            "id_map" : 2,
+            "id_poi" : 15,
+            "id_poi_in_map" : 4,
+            "image" : "",
+            "name" : "POI 4"
+        },
+        {
+            "active": true,
+            "color": "",
+            "comment": "",
+            "final_pose_t": -2.9059998989105225,
+            "final_pose_x": 38.64500045776367,
+            "final_pose_y": 13.560999870300293,
+            "icon": "",
+            "id_map": 2,
+            "id_poi": 16,
+            "id_poi_in_map": 5,
+            "image": "",
+            "name": "POI 10"
+          }
+    ]
+}

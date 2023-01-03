@@ -2,7 +2,7 @@ import { TourPoi } from "./lib/TourPoi.js"
 import { TourFailure } from "./lib/TourFailure.js"
 
 /**
- * 
+ * An AMR tour service
  */
 export class TourSvc
 {
@@ -10,6 +10,7 @@ export class TourSvc
   #pois
   #currentPoiIndex
   #tourFailure
+  #goToThenable
 
   /**
    * Constructor
@@ -20,7 +21,7 @@ export class TourSvc
     this.#client = wycaApiClient
     this.#currentPoiIndex = -1
     this.#pois = []
-    this.TourFailure = null
+    this.#tourFailure = null
   }
 
   /**
@@ -30,13 +31,13 @@ export class TourSvc
    */
   init(pois)
   {
-    const poisOkProm = new Promise((resolve, reject) =>
+    const initProm = new Promise((resolve, reject) =>
     {
       if (this.#checkPoisExist(pois))
         resolve(true)
       else reject(new TourFailure("Missing POI in current map", true))
     })
-    return this.wycaApiClient.init().then(okProm)
+    return this.wycaApiClient.init().then(initProm)
   }
 
   /**
@@ -50,12 +51,19 @@ export class TourSvc
     {
       // Next POI exists, lets go to next POI
       return this.#client.GoToPOI(nextIndex)
-      .then(
-        this.#currentPoiIndex ++
-      ).catch((err) =>
-      {
-        
-      })
+        .then(() =>
+        {
+          this.#currentPoiIndex ++
+          return new Promise((resolve, reject) =>
+          {
+            this.#goToThenable.resolve = resolve
+            this.#goToThenable.reject = reject
+          })
+        })
+        .catch((err) =>
+        {
+          return Promise.reject(err)
+        })
     }
     else
     {
@@ -73,11 +81,11 @@ export class TourSvc
   }
 
   /**
-   * Cancel the AMR's tour
+   * Cancel the AMR's tour and send the AMR to its docking station
    */
   cancel()
   {
-
+    return this.#client.GoToCharge(-1).then()
   }
 
   /**
@@ -128,6 +136,37 @@ export class TourSvc
         ok = false
     }
     return ok
+  }
+
+  /**
+   * Resolve go to Promise from the API Result
+   * @param {*} res - API result
+   */
+  async #resolveGoto(res)
+  {
+    if (res.A === 0)
+    {
+      this.#goToThenable.resolve(this.#pois[this.#currentPoiIndex])
+    }
+    else
+    {
+      const failure = this.#failureFromApiResponse(res)
+      this.#goToThenable.reject(failure)
+    }
+  }
+
+  /**
+   * Returns a TourFailure from an API response
+   * @param {*} res - API result
+   * @returns {TourFailure} 
+   */
+  #failureFromApiResponse(res)
+  {
+    let failure;
+    // TODO: list critical answer codes
+    const criticalCodes = [0x001]
+    const critical = criticalCodes.includes(res.A)
+    return new TourFailure(res.M, critical);
   }
 
 }
