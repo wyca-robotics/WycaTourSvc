@@ -1,5 +1,6 @@
 import { TourPoi } from "./lib/TourPoi.js"
 import { TourFailure } from "./lib/TourFailure.js"
+import { MockingClient } from "./lib/MockingClient.js"
 
 /**
  * An AMR tour service
@@ -14,11 +15,11 @@ export class TourSvc
 
   /**
    * Constructor
-   * @param { WycaApiClient } wycaApiClient 
+   * @param { MockingClient } apiClient 
    */
-  constructor(wycaApiClient)
+  constructor(apiClient)
   {
-    this.#client = wycaApiClient
+    this.#client = apiClient
     this.#currentPoiIndex = -1
     this.#pois = []
     this.#tourFailure = null
@@ -29,18 +30,29 @@ export class TourSvc
    * @param { TourPoi[] } pois - A list of poi
    * @returns { Promise } a Promise wich resolves when the Tour is ready or rejects if something's wrong
    */
-  init(pois)
+  async init(pois)
   {
-    const initProm = new Promise((resolve, reject) =>
-    {
-      if (this.#checkPoisExist(pois))
-      {
-        this.#pois = pois
-        resolve(true)
-      }
-      else reject(new TourFailure("Missing POI(s) in current map", true))
+    return this.#client.init()
+    .then (() => {
+      return this.#client.getCurrentMapData()
     })
-    return this.#client.init().then(initProm)
+    .then((mapData) => {
+      return new Promise((resolve, reject) =>
+      {
+        if (this.#checkPoisInMapData(pois, mapData))
+        {
+          this.#pois = pois
+          resolve(true)
+        }
+        else
+        {
+          reject(new TourFailure("Missing POI(s) in current map", true))
+        }
+      })
+    })
+    .catch((e) =>{
+      return Promise.reject(new TourFailure("Client couldn't be initialized", true))
+    })
   }
 
   /**
@@ -123,22 +135,22 @@ export class TourSvc
   }
 
   /**
-   * Returns true if all tours'poi exist in the current Map data
-   * @param { TourPoi[] } pois 
+   * Returns true if all tours'poi exist in the Map data
+   * @param { TourPoi[] } pois
+   * @param { * } mapData 
    * @returns { boolean }
    */
-  async #checkPoisExist(pois)
+  #checkPoisInMapData(pois, mapData)
   {
-    const mapData = await this.client.getCurrentMapData()
     const poiIds = pois.map((p) => p.id)
     const mapPoiIds = mapData.pois.map((p) => p.id_poi)
     let ok = true
-    for (poi in poiIds)
+    for (let poi in poiIds)
     {
       if (!mapPoiIds.includes(poi))
         ok = false
       else
-        console.info(poi)
+        console.info("POI found",poi)
     }
     return ok
   }
@@ -173,5 +185,4 @@ export class TourSvc
     const critical = criticalCodes.includes(res.A)
     return new TourFailure(res.M, critical);
   }
-
 }

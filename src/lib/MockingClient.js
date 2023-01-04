@@ -18,13 +18,19 @@ export class MockingClient
   }
 
   /**
-   * Returns a Promise once initilization is done
+   * Returns a Promise wih resolve once the initilization is done
    * @returns {Promise<boolean>}
    */
   async init()
   {
     if (this.#options.mapDataPath !== "")
-      this.#mapData = JSON.parse(await fetch(this.#options.mapDataPath))
+    {
+      try {
+        this.#mapData = JSON.parse(await fetch(this.#options.mapDataPath))
+      } catch (error) {
+        return Promise.reject(error)
+      }
+    }
     return new Promise((resolve, reject) =>
     {
       if (this.#options.failOnInit)
@@ -38,11 +44,20 @@ export class MockingClient
     })
   }
 
+  /**
+   * Returns the current map's data
+   * @returns { Promise<*> } - A promise wich resolve with the current MapData
+   */
   async GetCurrentMapData()
   {
-    return new Promise.resolve(this.#options.mapData)
+    return Promise.resolve(this.#mapData)
   }
 
+  /**
+   * Ask the AMR to go the POI corresponding to id
+   * @param {*} idPoi - the POI's id
+   * @returns {Promise} - resolves if AMR can go to POI otherwise rejects
+   */
   async GoToPOI(idPoi)
   {
     return new Promise((resolve, reject) =>

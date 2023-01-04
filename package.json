@@ -5,15 +5,16 @@
   "type": "module",
   "main": "src/TourSvc.js",
   "scripts": {
-    "test": "mocha --require @babel/register test/specs"
+    "test": "mocha --require @babel/register test/specs",
+    "server": "node ./example"
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",
     "@babel/core": "^7.20.5",
     "@babel/preset-env": "^7.20.2",
     "@babel/register": "^7.18.9",
-    "mocha": "10.2.0",
-    "isomorphic-fetch":"3.0.0"
+    "chai-as-promised": "^7.1.1",
+    "mocha": "10.2.0"
   },
   "author": "Wyca",
   "license": "MIT"
