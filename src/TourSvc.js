@@ -34,24 +34,22 @@ export class TourSvc
   {
     return this.#client.init()
     .then (() => {
-      return this.#client.getCurrentMapData()
+      return this.#client.GetCurrentMapData()
+    })
+    .catch((e) =>{
+      //return Promise.reject(e)
+      return Promise.reject(new TourFailure("Client couldn't be initialized", true))
     })
     .then((mapData) => {
-      return new Promise((resolve, reject) =>
-      {
         if (this.#checkPoisInMapData(pois, mapData))
         {
           this.#pois = pois
-          resolve(true)
+          return Promise.resolve(true)
         }
         else
         {
-          reject(new TourFailure("Missing POI(s) in current map", true))
+          return Promise.reject(new TourFailure("Missing POI(s) in current map", true))
         }
-      })
-    })
-    .catch((e) =>{
-      return Promise.reject(new TourFailure("Client couldn't be initialized", true))
     })
   }
 
@@ -145,12 +143,14 @@ export class TourSvc
     const poiIds = pois.map((p) => p.id)
     const mapPoiIds = mapData.pois.map((p) => p.id_poi)
     let ok = true
-    for (let poi in poiIds)
+    for (let n in poiIds)
     {
+      const poi = poiIds[n]
       if (!mapPoiIds.includes(poi))
+      {
         ok = false
-      else
-        console.info("POI found",poi)
+        // console.info("not found",poi)
+      }
     }
     return ok
   }

@@ -1,7 +1,13 @@
-
-import { strict as assert } from 'assert'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+//import { strict as assert } from 'assert'
 import { MockingClient } from '../../src/lib/MockingClient.js'
 import * as fs from 'fs';
+
+chai.use(chaiAsPromised)
+const assert = chai.assert
+const expect = chai.expect
+
 
 async function fetch(fn)
 {
@@ -39,13 +45,13 @@ describe("MockingClient", () =>
     it("should resolve by default with true", () =>
     {
       let mc = new MockingClient()
-      mc.init().then(() => assert(true), () => assert(false));
+      return expect(mc.init()).to.be.fulfilled;
     })
 
     it("should reject if asked to", () =>
     {
       const mc = new MockingClient({ failOnInit: true })
-      return mc.init().then(() => assert(false), () => assert(true));
+      return expect(mc.init()).to.be.rejected
     })
   })
 

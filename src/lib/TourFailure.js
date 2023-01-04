@@ -1,7 +1,7 @@
 /**
  * 
  */
-export class TourFailure {
+export class TourFailure extends Error{
   #label
   #critical
   /**
@@ -10,7 +10,8 @@ export class TourFailure {
    * @param { boolean } critical
    */
   constructor (label, critical=true) {
-    this.#label = label
+    super(label) 
+    this.#label =  label
     this.#critical = critical
   }
 

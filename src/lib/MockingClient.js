@@ -23,25 +23,24 @@ export class MockingClient
    */
   async init()
   {
+    const rejectProm = Promise.reject(new Error("Couldn't initialize the AMR's client API"))
+    if (this.#options.failOnInit)
+    {
+      return rejectProm
+    }
     if (this.#options.mapDataPath !== "")
     {
-      try {
-        this.#mapData = JSON.parse(await fetch(this.#options.mapDataPath))
-      } catch (error) {
-        return Promise.reject(error)
-      }
+      return fetch(this.#options.mapDataPath)
+        .then((rawData) => {
+          this.#mapData = JSON.parse(rawData)
+          return Promise.resolve(true)
+        })
+        .catch(() => rejectProm)
     }
-    return new Promise((resolve, reject) =>
+    else
     {
-      if (this.#options.failOnInit)
-      {
-        reject(new Error("Couldn't initialize the AMR's client API"))
-      }
-      else
-      {
-        resolve(true)
-      }
-    })
+      return Promise.resolve(true)
+    }
   }
 
   /**
