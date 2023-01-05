@@ -83,7 +83,7 @@ export class MockingClient
             }
             this.onGoToPoiResult(res);
           }
-        }, Math.random() * 1000)
+        }, this.#genLatencyMs())
         resolve()
       }
     })
@@ -114,9 +114,18 @@ export class MockingClient
             }
             this.onGoToChargeResult(res);
           }
-        }, Math.random() * 1000)
+        }, this.#genLatencyMs())
         resolve()
       }
     })
+  }
+
+  /**
+   * Generate a 100-200ms ranged latency
+   * @returns {number} - Latency in ms
+   */
+  #genLatencyMs()
+  {
+    return (Math.random() * 100) + 100
   }
 }
