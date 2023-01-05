@@ -71,6 +71,6 @@ svc.resume()
     console.log("Reached the POI, now i can play its video", poi.videoPath)
 })
 .catch((failure) => {
-    console.log("Oh no ! Not again :()
+    console.log("Oh no ! Not again :(")
 })
 ```
