@@ -79,7 +79,16 @@ export class TourSvc
    */
   async resume()
   {
-
+    if (this.#currentPoiIndex > -1)
+    {
+      // Next POI exists, lets go to next POI
+      return this.#createGoToPoiPromise(this.#currentPoiIndex)
+    }
+    else
+    {
+      // The AMR reached its last POI and should go to its Docking station
+      return this.#createGoToChargePromise()
+    }
   }
 
   /**

@@ -3,6 +3,10 @@ export class MockingClient
   #options
   #mapData
 
+  // Callbacks function
+  #onGoToPoiResult
+  #onGoToChargeResult
+
   constructor(options = {})
   {
     const opt = {
@@ -19,8 +23,67 @@ export class MockingClient
   }
 
   /**
-   * Returns a Promise wih resolve once the initilization is done
-   * @returns {Promise<boolean>}
+   * @param {function} fn
+   */
+  set onGoToPoiResult(fn)
+  {
+    if (typeof fn === "function")
+      this.#onGoToPoiResult = fn
+    else throw new Error("onGoToPoiResult must be a function")
+  }
+
+  /**
+   * @param {function} fn
+   */
+  set onGoToChargeResult(fn)
+  {
+    if (typeof fn === "function")
+      this.#onGoToChargeResult = fn
+    else throw new Error("onGoToChargeResult must be a function")
+  }
+
+  /**
+   * @param {boolean} fail
+   */
+  set failOnInit(fail)
+  {
+    this.#options.failOnInit = fail
+  }
+
+  /**
+   * @param {boolean} fail
+   */
+  set failOnGoToChargek(fail)
+  {
+    this.#options.failOnGoToChargek = fail
+  }
+  /**
+   * @param {boolean} fail
+   */
+  set failOnDock(fail)
+  {
+    this.#options.failOnDock = fail
+  }
+
+  /**
+   * @param {number} id
+   */
+  set failOnGotoPoiId(id)
+  {
+    this.#options.failOnGotoPoiId = id
+  }
+
+  /**
+   * @param {number} id
+   */
+  set failOnPoiId(id)
+  {
+    this.#options.failOnPoiId = id
+  }
+
+  /**
+   * Initilize the API and eturns a Promise 
+   * @returns {Promise<boolean>} - A promise wich resolves once the API initilization is done
    */
   async init()
   {
@@ -32,7 +95,8 @@ export class MockingClient
     if (this.#options.mapDataPath !== "")
     {
       return fetch(this.#options.mapDataPath)
-        .then((rawData) => {
+        .then((rawData) =>
+        {
           this.#mapData = JSON.parse(rawData)
           return Promise.resolve(true)
         })
@@ -45,8 +109,8 @@ export class MockingClient
   }
 
   /**
-   * Returns the current map's data
-   * @returns { Promise<*> } - A promise wich resolve with the current MapData
+   * Returns the AMR current map's data
+   * @returns { Promise<*> } - Resolves with the current MapData
    */
   async GetCurrentMapData()
   {
@@ -56,7 +120,7 @@ export class MockingClient
   /**
    * Ask the AMR to go the POI corresponding to id
    * @param {number} idPoi - the POI's id
-   * @returns {Promise} - resolves if AMR can go to POI otherwise rejects
+   * @returns {Promise} - Resolves if AMR can go to POI otherwise rejects
    */
   async GoToPOI(idPoi)
   {
@@ -71,9 +135,9 @@ export class MockingClient
       {
         setTimeout(() =>
         {
-          if (this.onGoToPoiResult !== undefined && typeof this.onGoToPoiResult === "function")
+          if (this.#onGoToPoiResult !== undefined && typeof this.#onGoToPoiResult === "function")
           {
-            let res = {A: 0x000, M: ""}
+            let res = { A: 0x000, M: "" }
             if (this.#options.failOnPoiId === idPoi)
             {
               if (this.#options.criticalFailure)
@@ -81,7 +145,7 @@ export class MockingClient
               else
                 res = { A: 0x002, M: "Couldn't reach destination" }
             }
-            this.onGoToPoiResult(res);
+            this.#onGoToPoiResult(res);
           }
         }, this.#genLatencyMs())
         resolve()
@@ -90,13 +154,13 @@ export class MockingClient
   }
 
   /**
-   * Ask the AMR to goto to a docking station for charging correponding to id
+   * Ask the AMR to go to a docking station for charging correponding to id
    * @param {number} idDock - the docking station id (default -1 for nearest docking station)
-   * @returns {Promise}
+   * @returns {Promise} - Resolves if AMR can go to the docking station otherwise rejects
    */
   async GoToCharge(idDock = -1)
   {
-    idDock ++
+    idDock++
     return new Promise((resolve, reject) =>
     {
       if (this.#options.failOnGoToCharge)
@@ -108,9 +172,9 @@ export class MockingClient
       {
         setTimeout(() =>
         {
-          if (this.onGoToChargeResult !== undefined && typeof this.onGoToChargeResult === "function")
+          if (this.#onGoToChargeResult !== undefined && typeof this.#onGoToChargeResult === "function")
           {
-            let res = {A: 0x000, M: ""}
+            let res = { A: 0x000, M: "" }
             if (this.#options.failOnDock)
             {
               if (this.#options.criticalFailure)
@@ -118,7 +182,7 @@ export class MockingClient
               else
                 res = { A: 0x002, M: "Couldn't reach destination" }
             }
-            this.onGoToChargeResult(res);
+            this.#onGoToChargeResult(res);
           }
         }, this.#genLatencyMs())
         resolve()

@@ -121,6 +121,14 @@ describe("MockingClient", () =>
       return mc.GoToPOI(3)
     })
 
+    it("should throw an error if not set with a function", () =>
+    {
+      let test = () => {
+        mc.onGoToPoiResult = "notAFunction"
+      }
+      expect(test).to.throw(Error);
+    })
+
     it("should be called back with an error response", (done) =>
     {
       mc.onGoToPoiResult = (res) => {
@@ -151,9 +159,18 @@ describe("MockingClient", () =>
     })
   })
 
-  describe("#onGoToChargeResult callback", () =>
+  describe("seting onGoToChargeResult callback", () =>
   {
     let mc = new MockingClient({ failOnDock: true })
+
+    it("should throw an error if not set with a function", () =>
+    {
+      let test = () => {
+        mc.onGoToChargeResult = "notAFunction"
+      }
+      expect(test).to.throw(Error);
+    })
+
     before(() => {
       return mc.GoToCharge(-1)
     })

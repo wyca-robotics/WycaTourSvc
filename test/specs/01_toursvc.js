@@ -111,6 +111,7 @@ describe("TourSvc", () =>
 
 
   })
+
   describe("#next() with non critical failure", () =>
   {
     let svc
@@ -140,6 +141,46 @@ describe("TourSvc", () =>
     it("... and should reject going back to Docking station on its way when asked", () =>
     {
       return expect(svc.next()).to.be.rejectedWith(TourFailure, "Couldn't reach destination")
+    })
+
+  })
+
+  describe("#resume()", () =>
+  {
+    let svc
+    let pois
+    let mc
+    const jsonPath = __mockpath + "/map/map_data.json"
+
+    before(() =>
+    {
+      mc = new MockingClient({ mapDataPath: jsonPath, failOnPoiId: 12, failOnDock: true })
+      pois = []
+      pois.push(new TourPoi(12, "POI 12", "", ""))
+      svc = new TourSvc(mc)
+      return svc.init(pois)
+    })
+
+    it("should reject the 1st POI on its way when asked...", () =>
+    {
+      return expect(svc.next()).to.be.rejectedWith(TourFailure, "Couldn't reach destination")
+    })
+
+    it("... and resume should resolve with the 2nd POI when reached ...", () =>
+    {
+      mc.failOnPoiId = -1
+      return expect(svc.resume()).to.eventually.be.deep.equal(pois[0])
+    })
+
+    it("... and should reject going back to Docking station on its way when asked", () =>
+    {
+      return expect(svc.next()).to.be.rejectedWith(TourFailure, "Couldn't reach destination")
+    })
+
+    it("... and resume should resolve going back to Docking station on its way when asked", () =>
+    {
+      mc.failOnDock = false
+      return expect(svc.resume()).to.eventually.be.null
     })
 
   })
