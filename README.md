@@ -59,7 +59,7 @@ svc.next()
     }
     else
     {
-        console.log("Something's blocking the way, try again ? Or skip to next POI?")
+        console.log("Something's blocking the way, try again ? Or skip to next POI ?")
     }
 })
 ```
