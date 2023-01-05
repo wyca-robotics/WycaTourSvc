@@ -161,27 +161,27 @@ describe("TourSvc", () =>
       return svc.init(pois)
     })
 
-    it("should reject the 1st POI on its way when asked...", () =>
+    it("next reject the 1st POI on its way when asked...", () =>
     {
       return expect(svc.next()).to.be.rejectedWith(TourFailure, "Couldn't reach destination")
     })
 
-    it("... and resume should resolve with the 2nd POI when reached ...", () =>
+    it("... and resume should resolve with the 1st POI when reached ...", () =>
     {
       mc.failOnPoiId = -1
       return expect(svc.resume()).to.eventually.be.deep.equal(pois[0])
     })
 
-    it("... and should reject going back to Docking station on its way when asked", () =>
+    it("... and next should reject going back to Docking station on its way when asked", () =>
     {
       return expect(svc.next()).to.be.rejectedWith(TourFailure, "Couldn't reach destination")
     })
 
-    it("... and resume should resolve going back to Docking station on its way when asked", () =>
+    it("... and resume should resolve going back to Docking station", () =>
     {
       mc.failOnDock = false
       return expect(svc.resume()).to.eventually.be.null
     })
-
+    
   })
 })
