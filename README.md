@@ -19,8 +19,8 @@ const options = {
       failOnInit: false, // Simulate a failure on Init
       failOnDock: false, // Simulate a failure on its way to the docking station
       failOnGoToCharge: false, // Simulate a failure when asking to go to dock
-      failOnPoiId: -1, // Simulate a failure on its way to a POI'sid
-      failOnGotoPoiId: -1, // Simulate a failure when asking to go to a POI'sid
+      failOnPoiId: -1, // Simulate a failure on its way to a POI'sid (-1 for none)
+      failOnGotoPoiId: -1, // Simulate a failure when asking to go to a POI'sid (-1 for none)
       mapDataPath: "mock/map/map_data.json", // MapData json file to simulate the robot's current MapData
     }
 }
