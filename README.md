@@ -15,13 +15,13 @@ import { TourSvc } from 'TourSvc.js'
 // default options with a path to MapData
 const options = {
 {
-      criticalFailure: false,
-      failOnInit: false,
-      failOnDock: false,
-      failOnGoToCharge: false,
-      failOnPoiId: -1,
-      failOnGotoPoiId: -1,
-      mapDataPath: "mock/map/map_data.json",
+      criticalFailure: false, // Should mocked failure be critical
+      failOnInit: false, // Simulate a failure on Init
+      failOnDock: false, // Simulate a failure on its way to the docking station
+      failOnGoToCharge: false, // Simulate a failure when asking to go to dock
+      failOnPoiId: -1, // Simulate a failure on its way to a POI'sid
+      failOnGotoPoiId: -1, // Simulate a failure when asking to go to a POI'sid
+      mapDataPath: "mock/map/map_data.json", // MapData json file to simulate the robot's current MapData
     }
 }
 
