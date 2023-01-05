@@ -60,49 +60,26 @@ export class TourSvc
    */
   async next()
   {
-    let gotoProm = new Promise((resolve, reject) =>
-    {
-      this.#goToThenable.resolve = resolve
-      this.#goToThenable.reject = reject
-    })
+    
     let nextIndex = this.#currentPoiIndex + 1
     if (nextIndex < this.#pois.length)
     {
       // Next POI exists, lets go to next POI
-      return this.#client.GoToPOI(this.#pois[nextIndex].id)
-        .then(() =>
-        {
-          this.#currentPoiIndex ++
-          this.#client.onGoToPoiResult = (res) => this.#resolveGoto(res)
-          return gotoProm
-        })
-        .catch((err) =>
-        {
-          return Promise.reject(err)
-        })
+      return this.#createGoToPoiPromise(nextIndex)
     }
     else
     {
       // The AMR reached its last POI and should go to its Docking station
-      return this.#client.GoToCharge(-1)
-        .then(() => {
-          this.#currentPoiIndex = -1
-          this.#client.onGoToChargeResult = (res) => this.#resolveGoto(res)
-          return gotoProm
-        })
-        .catch((err) =>
-        {
-          return Promise.reject(err)
-        })
+      return this.#createGoToChargePromise()
     }
   }
 
   /**
-   * Resume an interrupted tour 
+   * Resume an interrupted Tour
    */
   async resume()
   {
-    return this.#client.GoToPOI(this.#currentPoiIndex)
+
   }
 
   /**
@@ -171,7 +148,7 @@ export class TourSvc
    * Resolve go to Promise from the API Result
    * @param {*} res - API result
    */
-  async #resolveGoto(res)
+  #resolveGoto(res)
   {
     if (res.A === 0)
     {
@@ -196,6 +173,51 @@ export class TourSvc
     // TODO: list critical answer codes
     const criticalCodes = [0x001]
     const critical = criticalCodes.includes(res.A)
-    return new TourFailure(res.M, critical);
+    return new TourFailure(res.M, critical)
   }
+
+  #createGoToPromise()
+  {
+    let gotoProm = new Promise((resolve, reject) =>
+    {
+      this.#goToThenable.resolve = resolve
+      this.#goToThenable.reject = reject
+    })
+    return gotoProm
+  }
+
+  /**
+   * Returns a goto POI promise from 
+   * @param {number} index - POI index in the Tour's Pois List
+   * @returns 
+   */
+  async #createGoToPoiPromise(index)
+  {
+    return this.#client.GoToPOI(this.#pois[index].id)
+      .then(() =>
+      {
+        this.#currentPoiIndex = index
+        this.#client.onGoToPoiResult = (res) => this.#resolveGoto(res)
+        return this.#createGoToPromise()
+      })
+      .catch((err) =>
+      {
+        return Promise.reject(err)
+      })
+  }
+
+  async #createGoToChargePromise()
+  {
+    return this.#client.GoToCharge(-1)
+      .then(() => {
+        this.#currentPoiIndex = -1
+        this.#client.onGoToChargeResult = (res) => this.#resolveGoto(res)
+        return this.#createGoToPromise()
+      })
+      .catch((err) =>
+      {
+        return Promise.reject(err)
+      })
+  }
+  
 }
