@@ -6,9 +6,10 @@ export class MockingClient
   constructor(options = {})
   {
     const opt = {
-      criticalfailure: false,
+      criticalFailure: false,
       failOnInit: false,
       failOnDock: false,
+      failOnGoToCharge: false,
       failOnPoiId: -1,
       failOnGotoPoiId: -1,
       mapDataPath: "",
@@ -63,7 +64,7 @@ export class MockingClient
     {
       if (this.#options.failOnGotoPoiId === idPoi)
       {
-        const msg = this.#options.criticalfailure ? "Software Stop error" : "Couldn't reach destination"
+        const msg = this.#options.criticalFailure ? "Software Stop error" : "Couldn't reach destination"
         reject(new Error(msg))
       }
       else
@@ -75,7 +76,7 @@ export class MockingClient
             let res = {A: 0x000, M: ""}
             if (this.#options.failOnPoiId === idPoi)
             {
-              if (this.#options.criticalfailure)
+              if (this.#options.criticalFailure)
                 res = { A: 0x001, M: "Software Stop error" }
               else
                 res = { A: 0x002, M: "Couldn't reach destination" }
@@ -92,9 +93,9 @@ export class MockingClient
   {
     return new Promise((resolve, reject) =>
     {
-      if (this.#options.failOnPoiId === idPoi)
+      if (this.#options.failOnGoToCharge)
       {
-        const msg = this.#options.criticalfailure ? "Software Stop error" : "Couldn't reach destination"
+        const msg = this.#options.criticalFailure ? "Software Stop error" : "Couldn't reach destination"
         reject(new Error(msg))
       }
       else
@@ -103,10 +104,14 @@ export class MockingClient
         {
           if (this.onGoToChargeResult !== undefined && typeof this.onGoToChargeResult === "function")
           {
-            if (this.#options.criticalfailure)
-              res = { A: 0x001, M: "Software Stop error" }
-            else
-              res = { A: 0x002, M: "Couldn't reach destination" }
+            let res = {A: 0x000, M: ""}
+            if (this.#options.failOnDock)
+            {
+              if (this.#options.criticalFailure)
+                res = { A: 0x001, M: "Software Stop error" }
+              else
+                res = { A: 0x002, M: "Couldn't reach destination" }
+            }
             this.onGoToChargeResult(res);
           }
         }, Math.random() * 1000)

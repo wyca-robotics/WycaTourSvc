@@ -44,6 +44,7 @@ export class TourSvc
         if (this.#checkPoisInMapData(pois, mapData))
         {
           this.#pois = pois
+          this.#goToThenable = {}
           return Promise.resolve(true)
         }
         else
@@ -59,6 +60,11 @@ export class TourSvc
    */
   async next()
   {
+    let gotoProm = new Promise((resolve, reject) =>
+    {
+      this.#goToThenable.resolve = resolve
+      this.#goToThenable.reject = reject
+    })
     let nextIndex = this.#currentPoiIndex + 1
     if (nextIndex < this.#pois.length)
     {
@@ -67,11 +73,8 @@ export class TourSvc
         .then(() =>
         {
           this.#currentPoiIndex ++
-          return new Promise((resolve, reject) =>
-          {
-            this.#goToThenable.resolve = resolve
-            this.#goToThenable.reject = reject
-          })
+          this.#client.onGoToPoiResult = (res) => this.#resolveGoto(res)
+          return gotoProm
         })
         .catch((err) =>
         {
@@ -81,7 +84,16 @@ export class TourSvc
     else
     {
       // The AMR reached its last POI and should go to its Docking station
-      return this.#client.GoToCharge(-1).then()
+      return this.#client.GoToCharge(-1)
+        .then(() => {
+          this.#currentPoiIndex = -1
+          this.#client.onGoToChargeResult = (res) => this.#resolveGoto(res)
+          return gotoProm
+        })
+        .catch((err) =>
+        {
+          return Promise.reject(err)
+        })
     }
   }
 
@@ -163,7 +175,8 @@ export class TourSvc
   {
     if (res.A === 0)
     {
-      this.#goToThenable.resolve(this.#pois[this.#currentPoiIndex])
+      const currentPoi = this.#currentPoiIndex <  0 ? null : this.#pois[this.#currentPoiIndex]
+      this.#goToThenable.resolve(currentPoi)
     }
     else
     {
