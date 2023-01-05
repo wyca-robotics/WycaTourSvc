@@ -107,14 +107,30 @@ describe("MockingClient", () =>
       return expect(mc.GoToPOI(0)).to.be.fulfilled;
     })
 
-    it("should reject with critical error if asked to fail criticaly at a specific POI", () =>
+    it("should reject with critical error message if asked to fail criticaly at a specific POI", () =>
     {
       const mc = new MockingClient({ failOnGotoPoiId: 3, criticalFailure: true })
       return expect(mc.GoToPOI(3)).to.be.rejectedWith(Error, "Software Stop error")
     })
   })
 
-  describe("#GoToCharge()", () =>
+  describe("#onGoToPoiResult callback", () =>
+  {
+    let mc = new MockingClient({ failOnPoiId: 3 })
+    before(() => {
+      return mc.GoToPOI(3)
+    })
+
+    it("should be called back with an error response", (done) =>
+    {
+      mc.onGoToPoiResult = (res) => {
+        assert.deepEqual(res, { A: 0x002, M: "Couldn't reach destination" } )
+        done()
+      }
+    })
+  })
+
+  describe("#GoToCharge()", () => 
   {
     it("should resolve with true by default", () =>
     {
@@ -122,16 +138,32 @@ describe("MockingClient", () =>
       return expect(mc.GoToCharge(-1)).to.be.fulfilled;
     })
 
-    it("should reject with non critical error if asked to fail docking", () =>
+    it("should reject with non critical error message if asked to fail docking", () =>
     {
       const mc = new MockingClient({ failOnGoToCharge: true })
       return expect(mc.GoToCharge(-1)).to.be.rejectedWith(Error, "Couldn't reach destination")
     })
 
-    it("should reject with critical error if asked to fail criticaly at Docking", () =>
+    it("should reject with critical error message if asked to fail criticaly at Docking", () =>
     {
       const mc = new MockingClient({ failOnGoToCharge: true, criticalFailure: true })
       return expect(mc.GoToCharge(-1)).to.be.rejectedWith(Error, "Software Stop error")
     })
   })
-})  
+
+  describe("#onGoToChargeResult callback", () =>
+  {
+    let mc = new MockingClient({ failOnDock: true })
+    before(() => {
+      return mc.GoToCharge(-1)
+    })
+
+    it("should be called back with an error response", (done) =>
+    {
+      mc.onGoToChargeResult = (res) => {
+        assert.deepEqual(res, { A: 0x002, M: "Couldn't reach destination" })
+        done()
+      }
+    })
+  })
+})

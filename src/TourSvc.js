@@ -69,7 +69,7 @@ export class TourSvc
     if (nextIndex < this.#pois.length)
     {
       // Next POI exists, lets go to next POI
-      return this.#client.GoToPOI(nextIndex)
+      return this.#client.GoToPOI(this.#pois[nextIndex].id)
         .then(() =>
         {
           this.#currentPoiIndex ++

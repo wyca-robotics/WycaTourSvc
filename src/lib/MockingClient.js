@@ -55,7 +55,7 @@ export class MockingClient
 
   /**
    * Ask the AMR to go the POI corresponding to id
-   * @param {*} idPoi - the POI's id
+   * @param {number} idPoi - the POI's id
    * @returns {Promise} - resolves if AMR can go to POI otherwise rejects
    */
   async GoToPOI(idPoi)
@@ -89,8 +89,14 @@ export class MockingClient
     })
   }
 
-  async GoToCharge(idDock)
+  /**
+   * Ask the AMR to goto to a docking station for charging correponding to id
+   * @param {number} idDock - the docking station id (default -1 for nearest docking station)
+   * @returns {Promise}
+   */
+  async GoToCharge(idDock = -1)
   {
+    idDock ++
     return new Promise((resolve, reject) =>
     {
       if (this.#options.failOnGoToCharge)
@@ -121,7 +127,7 @@ export class MockingClient
   }
 
   /**
-   * Generate a 100-200ms ranged latency
+   * Generate a 100-200 ms ranged latency
    * @returns {number} - Latency in ms
    */
   #genLatencyMs()
