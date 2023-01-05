@@ -45,7 +45,7 @@ svc.ini(poiList)
 
 ```
 
-Once the service is initalized you can ask the AMR to go to its next destination, it will return a Promise that resoves wwith the readched POI or NULL if there is no more POI to go next and will go back to its docking station for charging
+Once the service is initalized you can ask the AMR to go to its next destination, it will return a Promise that resolves with the readched POI or NULL if there is no more POI to go next and will go back to its docking station for charging.
 
 ```js
 svc.next()
