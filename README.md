@@ -86,3 +86,6 @@ svc.resume()
     console.log("Oh no ! Not again :(")
 })
 ```
+
+#Version
+0.0.2
