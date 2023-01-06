@@ -49,7 +49,7 @@ export class TourSvc {
    * Ask the AMR to go to its next destination
    * @returns { Promise<TourPoi> | Promise<null> } A Promise wich resolve with the reached POI or null if going to Docking Station
    */
-  async next () {
+  next () {
     const nextIndex = this.#currentPoiIndex + 1
     if (nextIndex < this.#pois.length) {
       // Next POI exists, lets go to next POI
@@ -64,7 +64,7 @@ export class TourSvc {
    * Resume an interrupted Tour
    * @returns { Promise<TourPoi> | Promise<null> } A Promise wich resolve with the reached POI or null if going to Docking Station
    */
-  async resume () {
+  resume () {
     if (this.#currentPoiIndex > -1) {
       // Next POI exists, lets go to next POI
       return this.#createGoToPoiPromise(this.#currentPoiIndex)
@@ -75,10 +75,11 @@ export class TourSvc {
   }
 
   /**
-   * Cancels the AMR's tour and send the AMR to its docking station
+   * Cancels the AMR's tour and send the AMR back to its docking station
+   * @returns {Promise<null>}
    */
   cancel () {
-    return this.#client.GoToCharge(-1).then()
+    return this.#createGoToChargePromise()
   }
 
   /**
@@ -86,7 +87,7 @@ export class TourSvc {
    * @returns { TourPoi | null } the current POI or null
    */
   getCurrentPoi () {
-    return this.#currentPoiIndex > 0 ? this.#pois[this.#currentPoiIndex] : null
+    return this.#currentPoiIndex < 0 ? null : this.#pois[this.#currentPoiIndex]
   }
 
   /**

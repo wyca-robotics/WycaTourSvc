@@ -154,4 +154,100 @@ describe('TourSvc', () => {
       return expect(svc.resume()).to.eventually.be.null
     })
   })
+
+  describe('#cancel()', () => {
+    let svc
+    let pois
+    let mc
+    const jsonPath = __mockpath + '/map/map_data.json'
+
+    before(() => {
+      mc = new MockingClient({ mapDataPath: jsonPath})
+      pois = []
+      pois.push(new TourPoi(12, 'POI 12', '', ''))
+      svc = new TourSvc(mc)
+      return svc.init(pois)
+    })
+
+    it('should resolve going back to Docking station with null', () => {
+      return expect(svc.cancel()).to.eventually.be.null
+    })
+
+  })
+
+  describe('#getCurrentPoi()', () => {
+    let svc
+    let pois
+    let mc
+    const jsonPath = __mockpath + '/map/map_data.json'
+    let poi1 = new TourPoi(12, 'POI 12', '', '')
+    let poi2 = new TourPoi(13, 'POI 13', '', '')
+
+    before(() => {
+      mc = new MockingClient({ mapDataPath: jsonPath})
+      
+      pois = []
+      pois.push(poi1)
+      pois.push(poi2)
+      svc = new TourSvc(mc)
+      return svc.init(pois)
+    })
+
+    it('should return null (Docking station)', () => {
+      assert.equal(svc.getCurrentPoi(), null)
+    })
+
+    it('should return 1st poi after reaching poi 1', () => {
+      return svc.next()
+      .then(() => assert.equal(svc.getCurrentPoi(), poi1))
+    })
+
+    it('should return return 2nd poi after reaching poi 2', () => {
+      return svc.next()
+      .then(() => assert.equal(svc.getCurrentPoi(), poi2))
+    })
+
+    it('should return null (Docking station) after docking' , () => {
+      return svc.next()
+      .then(() => assert.equal(svc.getCurrentPoi(), null))
+    })
+  })
+
+  describe('#getNextPoi()', () => {
+    let svc
+    let pois
+    let mc
+    const jsonPath = __mockpath + '/map/map_data.json'
+    let poi1 = new TourPoi(12, 'POI 12', '', '')
+    let poi2 = new TourPoi(13, 'POI 13', '', '')
+
+    before(() => {
+      mc = new MockingClient({ mapDataPath: jsonPath})
+      
+      pois = []
+      pois.push(poi1)
+      pois.push(poi2)
+      svc = new TourSvc(mc)
+      return svc.init(pois)
+    })
+
+    it('should return 1st poi', () => {
+      assert.equal(svc.getNextPoi(), poi1)
+    })
+
+    it('should return return 2nd poi after reaching 1st poi', () => {
+      return svc.next()
+      .then(() => assert.equal(svc.getNextPoi(), poi2))
+    })
+
+    it('should return return null (docking station) after reaching poi 2', () => {
+      return svc.next()
+      .then(() => assert.equal(svc.getNextPoi(), null))
+    })
+
+    it('should return 1st poi after docking' , () => {
+      return svc.next()
+      .then(() => assert.equal(svc.getNextPoi(), poi1))
+    })
+  })
 })
