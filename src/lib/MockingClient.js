@@ -127,14 +127,13 @@ export class MockingClient {
     const errorMsg = "Couldn't initialize the AMR's client API"
     if (this.#options.failOnInit) {
       return Promise.reject(new Error(errorMsg))
-    }
-    else {
+    } else {
       if (this.#options.mapDataPath !== '') {
         return fetch(this.#options.mapDataPath)
           .then(rawData => rawData.json())
           .then(json => {
             this.#mapData = json
-            //console.log(json)
+            // console.log(json)
             return Promise.resolve(true)
           })
           .catch((e) => {
