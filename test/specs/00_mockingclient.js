@@ -94,7 +94,7 @@ describe('MockingClient', () => {
     })
   })
 
-  describe('#onGoToPoiResult callback', () => {
+  describe('setting onGoToPoiResult callback', () => {
     const mc = new MockingClient({ failOnPoiId: 3 })
     before(() => {
       return mc.GoToPOI(3)
@@ -132,7 +132,7 @@ describe('MockingClient', () => {
     })
   })
 
-  describe('seting onGoToChargeResult callback', () => {
+  describe('setting onGoToChargeResult callback', () => {
     const mc = new MockingClient({ failOnDock: true })
 
     it('should throw an error if not set with a function', () => {

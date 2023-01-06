@@ -231,16 +231,16 @@ describe('TourSvc', () => {
       return svc.init(pois)
     })
 
-    it('should return 1st poi', () => {
+    it('should return 1st poi when on the dock', () => {
       assert.equal(svc.getNextPoi(), poi1)
     })
 
-    it('should return return 2nd poi after reaching 1st poi', () => {
+    it('should return 2nd poi after reaching 1st poi', () => {
       return svc.next()
       .then(() => assert.equal(svc.getNextPoi(), poi2))
     })
 
-    it('should return return null (docking station) after reaching poi 2', () => {
+    it('should return null (docking station) after reaching last poi', () => {
       return svc.next()
       .then(() => assert.equal(svc.getNextPoi(), null))
     })
