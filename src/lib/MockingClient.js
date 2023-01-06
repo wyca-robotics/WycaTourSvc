@@ -14,7 +14,8 @@ export class MockingClient {
       failOnGoToCharge: false,
       failOnPoiId: -1,
       failOnGotoPoiId: -1,
-      mapDataPath: ''
+      mapDataPath: 'mock/map/map_data.json',
+      etaRange: { min: 50, max: 75 }
     }
     this.#options = { ...opt, ...options }
     this.#mapData = {}
@@ -199,10 +200,14 @@ export class MockingClient {
   }
 
   /**
-   * Generate a 100-200 ms ranged latency
+   * Generate random latency between etaRange option
    * @returns {number} - Latency in ms
    */
   #genLatencyMs () {
-    return (Math.random() * 100) + 100
+    const strictMin = 10
+    const min = this.#options.etaRange.min < strictMin ? strictMin : this.#options.etaRange.min
+    const max = min < this.#options.etaRange.max ? this.#options.etaRange.max : min
+    return (Math.random() * (max - min)) + min
   }
+
 }

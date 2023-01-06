@@ -4,9 +4,9 @@ A simple service to manage an AMR touring based on POI sequence.
 
 ## Using
 
-You need an ApiClient to instantiate the TourSvc, a MockingClient is provided.
+You need an ApiClient to instantiate the TourSvc, a MockingClient is provided for testing purpose.
 
-This MockingClient should be instantiated with an URI to a mapData.json file in an options dictionnary
+This MockingClient should be instantiated with an URI to a mapData.json file in an options dictionnary, other options a commented below :
 
 ```js
 import { MockingClient } from '/lib/MockingClient.js'
@@ -22,6 +22,7 @@ const options = {
       failOnPoiId: -1, // Simulate a failure on its way to a POI'sid (-1 for none)
       failOnGotoPoiId: -1, // Simulate a failure when asking to go to a POI'sid (-1 for none)
       mapDataPath: "mock/map/map_data.json", // MapData json file to simulate the robot's current MapData
+      etaRange: {min: 50, max: 75} // The ranged duration of goto (POI & Charge) actions'simulation.
     }
 }
 
