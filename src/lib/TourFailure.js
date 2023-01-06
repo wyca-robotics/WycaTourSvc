@@ -1,23 +1,23 @@
 /**
- * 
+ *
  */
-export class TourFailure extends Error{
+export class TourFailure extends Error {
   #label
   #critical
   /**
-   * 
-   * @param { string } label 
+   *
+   * @param { string } label
    * @param { boolean } critical
    */
-  constructor (label, critical=true) {
-    super(label) 
-    this.#label =  label
+  constructor (label, critical = true) {
+    super(label)
+    this.#label = label
     this.#critical = critical
   }
 
   /**
    * The failure label
-   * @returns { string } 
+   * @returns { string }
    */
   get label () {
     return this.#label
@@ -30,5 +30,4 @@ export class TourFailure extends Error{
   get critical () {
     return this.#critical
   }
-
 }

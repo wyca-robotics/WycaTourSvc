@@ -1,17 +1,17 @@
 export class TourPoi {
   #id
-  #label 
+  #label
   #imagePath
   #videoPath
 
   /**
-   * 
-   * @param { number } id 
-   * @param { string } label 
-   * @param { string } imgPath 
-   * @param { string } videoPath 
+   *
+   * @param { number } id
+   * @param { string } label
+   * @param { string } imgPath
+   * @param { string } videoPath
    */
-  constructor(id, label, imgPath, videoPath) {
+  constructor (id, label, imgPath, videoPath) {
     this.#id = id
     this.#label = label
     this.#imagePath = imgPath

@@ -1,5 +1,4 @@
-export class MockingClient
-{
+export class MockingClient {
   #options
   #mapData
 
@@ -7,8 +6,7 @@ export class MockingClient
   #onGoToPoiResult
   #onGoToChargeResult
 
-  constructor(options = {})
-  {
+  constructor (options = {}) {
     const opt = {
       criticalFailure: false,
       failOnInit: false,
@@ -16,94 +14,127 @@ export class MockingClient
       failOnGoToCharge: false,
       failOnPoiId: -1,
       failOnGotoPoiId: -1,
-      mapDataPath: "",
+      mapDataPath: ''
     }
     this.#options = { ...opt, ...options }
     this.#mapData = {}
   }
 
   /**
-   * @param {function} fn
+   * @returns {function}
    */
-  set onGoToPoiResult(fn)
-  {
-    if (typeof fn === "function")
-      this.#onGoToPoiResult = fn
-    else throw new Error("onGoToPoiResult must be a function")
+  get onGoToPoiResult () {
+    return this.#onGoToPoiResult
   }
 
   /**
    * @param {function} fn
    */
-  set onGoToChargeResult(fn)
-  {
-    if (typeof fn === "function")
-      this.#onGoToChargeResult = fn
-    else throw new Error("onGoToChargeResult must be a function")
+  set onGoToPoiResult (fn) {
+    if (typeof fn === 'function') { this.#onGoToPoiResult = fn } else throw new Error('onGoToPoiResult must be a function')
+  }
+
+  /**
+   * @returns {function}
+   */
+  get onGoToChargeResult () {
+    return this.#onGoToChargeResult
+  }
+
+  /**
+   * @param {function} fn
+   */
+  set onGoToChargeResult (fn) {
+    if (typeof fn === 'function') { this.#onGoToChargeResult = fn } else throw new Error('onGoToChargeResult must be a function')
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  get failOnInit () {
+    return this.#options.failOnInit
   }
 
   /**
    * @param {boolean} fail
    */
-  set failOnInit(fail)
-  {
+  set failOnInit (fail) {
     this.#options.failOnInit = fail
   }
 
   /**
-   * @param {boolean} fail
+   * @returns {boolean}
    */
-  set failOnGoToChargek(fail)
-  {
-    this.#options.failOnGoToChargek = fail
+  get failOnGoToCharge () {
+    return this.#options.failOnGoToCharge
   }
+
   /**
    * @param {boolean} fail
    */
-  set failOnDock(fail)
-  {
+  set failOnGoToCharge (fail) {
+    this.#options.failOnGoToCharge = fail
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  get failOnDock () {
+    return this.#options.failOnDock
+  }
+
+  /**
+   * @param {boolean} fail
+   */
+  set failOnDock (fail) {
     this.#options.failOnDock = fail
   }
 
   /**
+   * @returns {number}
+   */
+  get failOnGotoPoiId () {
+    return this.#options.failOnGotoPoiId
+  }
+
+  /**
    * @param {number} id
    */
-  set failOnGotoPoiId(id)
-  {
+  set failOnGotoPoiId (id) {
     this.#options.failOnGotoPoiId = id
   }
 
   /**
+   * @returns {number}
+   */
+  get failOnPoiId () {
+    return this.#options.failOnPoiId
+  }
+
+  /**
    * @param {number} id
    */
-  set failOnPoiId(id)
-  {
+  set failOnPoiId (id) {
     this.#options.failOnPoiId = id
   }
 
   /**
-   * Initilize the API and eturns a Promise 
+   * Initilize the API and eturns a Promise
    * @returns {Promise<boolean>} - A promise wich resolves once the API initilization is done
    */
-  async init()
-  {
+  async init () {
     const rejectProm = Promise.reject(new Error("Couldn't initialize the AMR's client API"))
-    if (this.#options.failOnInit)
-    {
+    if (this.#options.failOnInit) {
       return rejectProm
     }
-    if (this.#options.mapDataPath !== "")
-    {
+    if (this.#options.mapDataPath !== '') {
       return fetch(this.#options.mapDataPath)
-        .then((rawData) =>
-        {
+        .then((rawData) => {
           this.#mapData = JSON.parse(rawData)
           return Promise.resolve(true)
         })
         .catch(() => rejectProm)
-    }
-    else
-    {
+    } else {
       return Promise.resolve(true)
     }
   }
@@ -112,8 +143,7 @@ export class MockingClient
    * Returns the AMR current map's data
    * @returns { Promise<*> } - Resolves with the current MapData
    */
-  async GetCurrentMapData()
-  {
+  async GetCurrentMapData () {
     return Promise.resolve(this.#mapData)
   }
 
@@ -122,30 +152,19 @@ export class MockingClient
    * @param {number} idPoi - the POI's id
    * @returns {Promise} - Resolves if AMR can go to POI otherwise rejects
    */
-  async GoToPOI(idPoi)
-  {
-    return new Promise((resolve, reject) =>
-    {
-      if (this.#options.failOnGotoPoiId === idPoi)
-      {
-        const msg = this.#options.criticalFailure ? "Software Stop error" : "Couldn't reach destination"
+  async GoToPOI (idPoi) {
+    return new Promise((resolve, reject) => {
+      if (this.#options.failOnGotoPoiId === idPoi) {
+        const msg = this.#options.criticalFailure ? 'Software Stop error' : "Couldn't reach destination"
         reject(new Error(msg))
-      }
-      else
-      {
-        setTimeout(() =>
-        {
-          if (this.#onGoToPoiResult !== undefined && typeof this.#onGoToPoiResult === "function")
-          {
-            let res = { A: 0x000, M: "" }
-            if (this.#options.failOnPoiId === idPoi)
-            {
-              if (this.#options.criticalFailure)
-                res = { A: 0x001, M: "Software Stop error" }
-              else
-                res = { A: 0x002, M: "Couldn't reach destination" }
+      } else {
+        setTimeout(() => {
+          if (this.#onGoToPoiResult !== undefined && typeof this.#onGoToPoiResult === 'function') {
+            let res = { A: 0x000, M: '' }
+            if (this.#options.failOnPoiId === idPoi) {
+              if (this.#options.criticalFailure) { res = { A: 0x001, M: 'Software Stop error' } } else { res = { A: 0x002, M: "Couldn't reach destination" } }
             }
-            this.#onGoToPoiResult(res);
+            this.#onGoToPoiResult(res)
           }
         }, this.#genLatencyMs())
         resolve()
@@ -158,31 +177,20 @@ export class MockingClient
    * @param {number} idDock - the docking station id (default -1 for nearest docking station)
    * @returns {Promise} - Resolves if AMR can go to the docking station otherwise rejects
    */
-  async GoToCharge(idDock = -1)
-  {
+  async GoToCharge (idDock = -1) {
     idDock++
-    return new Promise((resolve, reject) =>
-    {
-      if (this.#options.failOnGoToCharge)
-      {
-        const msg = this.#options.criticalFailure ? "Software Stop error" : "Couldn't reach destination"
+    return new Promise((resolve, reject) => {
+      if (this.#options.failOnGoToCharge) {
+        const msg = this.#options.criticalFailure ? 'Software Stop error' : "Couldn't reach destination"
         reject(new Error(msg))
-      }
-      else
-      {
-        setTimeout(() =>
-        {
-          if (this.#onGoToChargeResult !== undefined && typeof this.#onGoToChargeResult === "function")
-          {
-            let res = { A: 0x000, M: "" }
-            if (this.#options.failOnDock)
-            {
-              if (this.#options.criticalFailure)
-                res = { A: 0x001, M: "Software Stop error" }
-              else
-                res = { A: 0x002, M: "Couldn't reach destination" }
+      } else {
+        setTimeout(() => {
+          if (this.#onGoToChargeResult !== undefined && typeof this.#onGoToChargeResult === 'function') {
+            let res = { A: 0x000, M: '' }
+            if (this.#options.failOnDock) {
+              if (this.#options.criticalFailure) { res = { A: 0x001, M: 'Software Stop error' } } else { res = { A: 0x002, M: "Couldn't reach destination" } }
             }
-            this.#onGoToChargeResult(res);
+            this.#onGoToChargeResult(res)
           }
         }, this.#genLatencyMs())
         resolve()
@@ -194,8 +202,7 @@ export class MockingClient
    * Generate a 100-200 ms ranged latency
    * @returns {number} - Latency in ms
    */
-  #genLatencyMs()
-  {
+  #genLatencyMs () {
     return (Math.random() * 100) + 100
   }
 }

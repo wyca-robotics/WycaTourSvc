@@ -5,6 +5,7 @@
   "type": "module",
   "main": "src/TourSvc.js",
   "scripts": {
+    "lint": "eslint --fix src",
     "test": "mocha --require @babel/register test/specs",
     "server": "node ./example"
   },
@@ -13,6 +14,12 @@
     "@babel/core": "^7.20.5",
     "@babel/preset-env": "^7.20.2",
     "@babel/register": "^7.18.9",
+    "eslint": "^8.30.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-mocha": "^10.1.0",
+    "eslint-plugin-n": "^15.6.0",
+    "eslint-plugin-promise": "^6.1.1",
     "chai-as-promised": "^7.1.1",
     "mocha": "10.2.0"
   },
