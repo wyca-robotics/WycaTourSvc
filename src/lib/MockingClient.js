@@ -209,5 +209,4 @@ export class MockingClient {
     const max = min < this.#options.etaRange.max ? this.#options.etaRange.max : min
     return (Math.random() * (max - min)) + min
   }
-
 }

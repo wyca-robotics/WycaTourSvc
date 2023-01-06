@@ -6,7 +6,7 @@
   "main": "src/TourSvc.js",
   "scripts": {
     "lint": "eslint --fix src",
-    "test": "mocha --require @babel/register test/specs",
+    "test": "mocha --require @babel/register test/setup.js test/specs",
     "server": "node ./example"
   },
   "devDependencies": {
@@ -23,6 +23,10 @@
     "chai-as-promised": "^7.1.1",
     "mocha": "10.2.0"
   },
+  "files": [
+    "src",
+    "README.md"
+  ],
   "author": "Wyca",
   "license": "MIT"
 }

@@ -3,21 +3,13 @@ import chaiAsPromised from 'chai-as-promised'
 import { TourSvc } from '../../src/TourSvc.js'
 import { TourPoi } from '../../src/lib/TourPoi.js'
 import { MockingClient } from '../../src/lib/MockingClient.js'
-import * as fs from 'fs'
 import { TourFailure } from '../../src/lib/TourFailure.js'
 
 chai.use(chaiAsPromised)
 const assert = chai.assert
 const expect = chai.expect
 
-async function fetch (fn) {
-  return await fs.promises.readFile(fn)
-}
-
-global.fetch = fetch
 const __mockpath = './mock'
-
-console.info(__mockpath)
 
 describe('TourSvc', () => {
   describe('constructor', () => {

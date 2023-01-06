@@ -2,16 +2,11 @@ import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 // import { strict as assert } from 'assert'
 import { MockingClient } from '../../src/lib/MockingClient.js'
-import * as fs from 'fs'
 
 chai.use(chaiAsPromised)
 const assert = chai.assert
 const expect = chai.expect
 
-async function fetch (fn) {
-  return await fs.promises.readFile(fn)
-}
-global.fetch = fetch
 const __mockpath = './mock'
 
 describe('MockingClient', () => {
