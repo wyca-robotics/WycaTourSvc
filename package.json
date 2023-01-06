@@ -25,6 +25,7 @@
   },
   "files": [
     "src",
+    "mock",
     "README.md"
   ],
   "author": "Wyca",

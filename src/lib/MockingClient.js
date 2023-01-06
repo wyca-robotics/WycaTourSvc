@@ -124,19 +124,25 @@ export class MockingClient {
    * @returns {Promise<boolean>} - A promise wich resolves once the API initilization is done
    */
   async init () {
-    const rejectProm = Promise.reject(new Error("Couldn't initialize the AMR's client API"))
+    const errorMsg = "Couldn't initialize the AMR's client API"
     if (this.#options.failOnInit) {
-      return rejectProm
+      return Promise.reject(new Error(errorMsg))
     }
-    if (this.#options.mapDataPath !== '') {
-      return fetch(this.#options.mapDataPath)
-        .then((rawData) => {
-          this.#mapData = JSON.parse(rawData)
-          return Promise.resolve(true)
-        })
-        .catch(() => rejectProm)
-    } else {
-      return Promise.resolve(true)
+    else {
+      if (this.#options.mapDataPath !== '') {
+        return fetch(this.#options.mapDataPath)
+          .then(rawData => rawData.json())
+          .then(json => {
+            this.#mapData = json
+            //console.log(json)
+            return Promise.resolve(true)
+          })
+          .catch((e) => {
+            return Promise.reject(e)
+          })
+      } else {
+        return Promise.resolve(true)
+      }
     }
   }
 

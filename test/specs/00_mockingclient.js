@@ -47,8 +47,9 @@ describe('MockingClient', () => {
       const mc = new MockingClient({ mapDataPath: jsonPath })
       let mockdata = null
       return fetch(jsonPath)
+        .then(rawData => rawData.json())
         .then((json) => {
-          mockdata = JSON.parse(json)
+          mockdata = json
           // console.info(mockdata)
           return mc.init()
         })
