@@ -1,6 +1,6 @@
-import { MockingClient } from '@wyca-robotics/wyca-tour-svc/src/lib/MockingClient.js'
-import { TourPoi } from '@wyca-robotics/wyca-tour-svc/src/lib/TourPoi.js'
-import { TourSvc } from '@wyca-robotics/wyca-tour-svc'
+import { MockingClient } from '../node_modules/@wyca-robotics/wyca-tour-svc/src/lib/MockingClient.js'
+import { TourPoi } from '../node_modules/@wyca-robotics/wyca-tour-svc/src/lib/TourPoi.js'
+import { TourSvc } from '../node_modules/@wyca-robotics/wyca-tour-svc/src/TourSvc.js'
 
 // default options with a path to MapData
 const options = {
