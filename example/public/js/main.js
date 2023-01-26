@@ -1,8 +1,9 @@
-import { MockingClient } from '../node_modules/@wyca-robotics/wyca-tour-svc/src/lib/MockingClient.js'
+import { WycaAPI, WycaWsClient } from '../node_modules/@wyca-robotics/lib-wyca-api/src/WycaAPI.js'
+// import { MockingClient } from '../node_modules/@wyca-robotics/wyca-tour-svc/src/lib/MockingClient.js'
 import { TourPoi } from '../node_modules/@wyca-robotics/wyca-tour-svc/src/lib/TourPoi.js'
 import { TourSvc } from '../node_modules/@wyca-robotics/wyca-tour-svc/src/TourSvc.js'
 
-// default options with a path to MapData
+// default options with a path to MapData 
 const options = {
   criticalFailure: false, // Should simulated failure be critical
   failOnInit: false, // Simulate a failure on Init
@@ -14,7 +15,9 @@ const options = {
   etaRange: { min: 50, max: 75 } // The ranged duration of goto (POI & Charge) actions'simulation.
 }
 
-const mc = new MockingClient(options)
+//const mc = new MockingClient(options)
+const wsClient = new WycaWsClient({ host: "ws://wyca.run:9094"})
+const mc = new WycaAPI(wsClient, { userKey: "5LGU.LaYMMncJaA0i42HwsX9ZX-RCNgj-9V17ROFXt71st" })
 const svc = new TourSvc(mc)
 
 document.addEventListener('DOMContentLoaded', onDocumentLoaded)
@@ -24,15 +27,16 @@ function onDocumentLoaded()
 {
   // Initialize the TourSvc with a list of TourPoi wich returns a Promise once the service is initialized
   let pois = []
-  pois.push(new TourPoi(12, "POI 1", "img/poi_1.png", "video/poi_1.mp4"))
-  pois.push(new TourPoi(13, "POI 2", "img/poi_2.png", "video/poi_2.mp4"))
-  pois.push(new TourPoi(14, "POI 3", "img/poi_3.png", "video/poi_3.mp4"))
+  pois.push(new TourPoi(89, "POI 1", "img/poi_1.png", "video/poi_1.mp4"))
+  pois.push(new TourPoi(90, "POI 2", "img/poi_2.png", "video/poi_2.mp4")) 
+  pois.push(new TourPoi(91, "POI 3", "img/poi_3.png", "video/poi_3.mp4"))
   // Of course ToutPoi id must match the MapData's pois id_poi otherwise it will be rejected
 
   svc.init(pois)
     .then(() =>
     {
       console.log("All's set, ready to go !")
+      bindBtn()
     })
     .catch((failure) =>
     {
@@ -40,6 +44,12 @@ function onDocumentLoaded()
     })
 }
 
+
+function bindBtn() {
+  document.querySelector("#nextBtn").addEventListener("click", onNextBtnClick)
+  document.querySelector("#cancelBtn").addEventListener("click", onCancelBtnClick)
+  document.querySelector("#resumeBtn").addEventListener("click", onResumeBtnClick)
+}
 // Go to next POI
 function onNextBtnClick()
 {
@@ -52,11 +62,11 @@ function onNextBtnClick()
     {
       if (failure.critical)
       {
-        console.log("Oh no the Robot's got a problem, call a technician !")
+        console.log("Oh no the Robot's got a problem, call a technician !", failure)
       }
       else
       {
-        console.log("Something's blocking the way, try again (Resume) ? Or skip to next POI (Next) ? or cancel the tour (Cancel) ?")
+        console.log("Something's blocking the way, try again (Resume) ? Or skip to next POI (Next) ? or cancel the tour (Cancel) ?", failure)
       }
     })
 }
@@ -71,7 +81,7 @@ function onResumeBtnClick()
     })
     .catch((failure) =>
     {
-      console.log("Oh no ! Not again :(")
+      console.log("Oh no ! Not again :(", failure)
     })
 }
 
@@ -85,7 +95,7 @@ function onCancelBtnClick()
     })
     .catch((failure) =>
     {
-      console.log("AMR couldn't reach it docking station")
+      console.log("AMR couldn't reach its docking station", failure)
     })
 }
 

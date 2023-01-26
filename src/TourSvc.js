@@ -173,10 +173,14 @@ export class TourSvc {
    * @returns {Promise<TourPoi>} - a Promise wich resolve once the Robot reached the indexed POI
    */
   async #createGoToPoiPromise (index) {
+    const cb = (res) => this.#resolveGoto(res)
     return this.#client.GoToPOI(this.#pois[index].id)
       .then(() => {
         this.#currentPoiIndex = index
-        this.#client.onGoToPoiResult = (res) => this.#resolveGoto(res)
+        if (this.#client.constructor.name == "MockingClient")
+          this.#client.onGoToPoiResult = cb
+        else 
+          this.#client.onGoToPOIResult(cb)
         return this.#createGoToPromise()
       })
       .catch((err) => {
@@ -189,12 +193,16 @@ export class TourSvc {
    * @returns {Promise} - a Promise wich resolve once the Robot is docked
    */
   async #createGoToChargePromise () {
+    const cb = (res) => this.#resolveGoto(res)
     return this.#client.GoToCharge(-1)
       .then(() => {
         this.#currentPoiIndex = -1
-        this.#client.onGoToChargeResult = (res) => this.#resolveGoto(res)
+        if (this.#client.constructor.name == "MockingClient")
+          this.#client.onGoToChargeResult = cb
+        else
+          this.#client.onGoToChargeResult(cb)
         return this.#createGoToPromise()
-      })
+      })          
       .catch((err) => {
         return Promise.reject(err)
       })

@@ -10,10 +10,8 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@wyca-robotics/wyca-tour-svc": "^0.0.1"
-  },
   "devDependencies": {
+    "@wyca-robotics/wyca-tour-svc": "^0.0.4",
     "http": "^0.0.1-security",
     "serve": "^14.1.2"
   }
