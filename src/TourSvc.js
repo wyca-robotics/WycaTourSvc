@@ -80,15 +80,17 @@ export class TourSvc {
    * Cancels the AMR's tour and send the AMR back to its docking station
    * @returns {Promise<null>}
    */
-  cancel () {
+  async cancel () {
     if (this.#moving === true)
     {
       console.warn("Canceling robot's move !")
-      return this.#client.StopMove()
-      .then(()=> {
-        console.log("back to charge")
-        return this.#createGoToChargePromise()
-      });
+      this.#client.StopMove()
+      return new Promise((resolve, reject) => {
+        if (this.#client.constructor.name == "MockingClient")
+          this.#client.onGoToPOIResult = () => resolve()
+        else
+          this.#client.onGoToPOIResult(() => resolve())
+      }).then(() => this.#createGoToChargePromise())
     }
     else
       return this.#createGoToChargePromise()

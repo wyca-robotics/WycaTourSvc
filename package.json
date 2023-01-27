@@ -1,6 +1,6 @@
 {
   "name": "@wyca-robotics/wyca-tour-svc",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "A simple AMR touring service",
   "type": "module",
   "main": "src/TourSvc.js",
