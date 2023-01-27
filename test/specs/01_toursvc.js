@@ -147,7 +147,7 @@ describe('TourSvc', () => {
     })
   })
 
-  describe('#cancel()', () => {
+  describe('#cancel() not moving', () => {
     let svc
     let pois
     let mc
@@ -162,6 +162,27 @@ describe('TourSvc', () => {
     })
 
     it('should resolve going back to Docking station with null', () => {
+      return expect(svc.cancel()).to.eventually.be.null
+    })
+
+  })
+
+  describe('#cancel() moving', () => {
+    let svc
+    let pois
+    let mc
+    const jsonPath = __mockpath + '/map/map_data.json'
+
+    before(() => {
+      mc = new MockingClient({ mapDataPath: jsonPath})
+      pois = []
+      pois.push(new TourPoi(12, 'POI 12', '', ''))
+      svc = new TourSvc(mc)
+      return svc.init(pois)
+    })
+
+    it('should resolve going back to Docking station with null', () => {
+      svc.next();
       return expect(svc.cancel()).to.eventually.be.null
     })
 

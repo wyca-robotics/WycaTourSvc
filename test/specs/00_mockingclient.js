@@ -148,5 +148,59 @@ describe('MockingClient', () => {
         done()
       }
     })
+    
+  })
+
+  describe('StopMove GotoPOI', () => {
+    const mc = new MockingClient( {etaRange: {min: 200, max: 250}})
+
+    before(() => {
+      return mc.GoToPOI(1)
+    })
+
+    it('should cancel GotoPOI and gotoPOI shoudl return a cancel response (0x0c9)', (done) => {
+      mc.onGoToPoiResult = (r) => {
+        // console.info("gotopoi",r)
+        assert.deepEqual(r, {
+          A : 0x0CA,
+          D : 
+          {
+            A : 0x0CA,
+            M : ""
+          },
+          M : "",
+          E:9
+        })
+        done()
+      }
+      setTimeout(() => mc.StopMove(), 100)
+    })
+  })
+
+  describe('StopMove GotoCharge', () => {
+    const mc = new MockingClient( {etaRange: {min: 200, max: 250}})
+
+    before(() => {
+      return mc.GoToCharge(-1)
+    })
+
+    it('should cancel GotoCharge and gotoChargeResult shoudl return a cancel response (0x0c9)', (done) => {
+      mc.onGoToChargeResult = (r) => {
+        // console.info("gotocharge", r)
+        assert.deepEqual(r, {
+          A : 0x0CA,
+          D : 
+          { 
+            A : 0x0CA,
+            M : ""
+          },
+          M : "",
+          E:7
+        })
+        done()
+      }
+      setTimeout(() => mc.StopMove(), 100)
+      
+    })
   })
 })

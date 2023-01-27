@@ -8,6 +8,7 @@ export class TourSvc {
   #currentPoiIndex
   #tourFailure
   #goToThenable
+  #moving
 
   /**
    * Constructor
@@ -18,6 +19,7 @@ export class TourSvc {
     this.#currentPoiIndex = -1
     this.#pois = []
     this.#tourFailure = null
+    this.#moving = false
   }
 
   /**
@@ -79,7 +81,17 @@ export class TourSvc {
    * @returns {Promise<null>}
    */
   cancel () {
-    return this.#createGoToChargePromise()
+    if (this.#moving === true)
+    {
+      console.warn("Canceling robot's move !")
+      return this.#client.StopMove()
+      .then(()=> {
+        console.log("back to charge")
+        return this.#createGoToChargePromise()
+      });
+    }
+    else
+      return this.#createGoToChargePromise()
   }
 
   /**
@@ -134,6 +146,7 @@ export class TourSvc {
    * @param {*} res - API result
    */
   #resolveGoto (res) {
+    this.#moving = false
     if (res.A === 0) {
       const currentPoi = this.#currentPoiIndex < 0 ? null : this.#pois[this.#currentPoiIndex]
       this.#goToThenable.resolve(currentPoi)
@@ -152,6 +165,8 @@ export class TourSvc {
     // TODO: list critical answer codes
     const criticalCodes = [0x001]
     const critical = criticalCodes.includes(res.A)
+    if (res.A === 0x0ca)
+      res.M = "Action canceled by user"
     return new TourFailure(res.M, critical)
   }
 
@@ -160,6 +175,7 @@ export class TourSvc {
    * @returns {Promise} - a Promise wich resolve when the AMR reach its goal
    */
   #createGoToPromise () {
+    this.#moving = true
     const gotoProm = new Promise((resolve, reject) => {
       this.#goToThenable.resolve = resolve
       this.#goToThenable.reject = reject

@@ -1,10 +1,18 @@
+export const ERobotAction = {
+  STOPPED: "Stopped",
+  MOVING_TO_POI: "Going to POI",
+  MOVING_TO_DOCK: "Going to Dock"
+}
+
 export class MockingClient {
   #options
   #mapData
+  #gotoTimer
 
   // Callbacks function
   #onGoToPoiResult
   #onGoToChargeResult
+  #robotAction
 
   constructor (options = {}) {
     const opt = {
@@ -19,6 +27,8 @@ export class MockingClient {
     }
     this.#options = { ...opt, ...options }
     this.#mapData = {}
+    this.#gotoTimer = null;
+    this.#robotAction = ERobotAction.STOPPED
   }
 
   /**
@@ -164,12 +174,14 @@ export class MockingClient {
         const msg = this.#options.criticalFailure ? 'Software Stop error' : "Couldn't reach destination"
         reject(new Error(msg))
       } else {
-        setTimeout(() => {
+        this.#robotAction = ERobotAction.MOVING_TO_POI
+        this.#gotoTimer = setTimeout(() => {
           if (this.#onGoToPoiResult !== undefined && typeof this.#onGoToPoiResult === 'function') {
             let res = { A: 0x000, M: '' }
             if (this.#options.failOnPoiId === idPoi) {
               if (this.#options.criticalFailure) { res = { A: 0x001, M: 'Software Stop error' } } else { res = { A: 0x002, M: "Couldn't reach destination" } }
             }
+            this.#robotAction = ERobotAction.STOPPED
             this.#onGoToPoiResult(res)
           }
         }, this.#genLatencyMs())
@@ -190,18 +202,64 @@ export class MockingClient {
         const msg = this.#options.criticalFailure ? 'Software Stop error' : "Couldn't reach destination"
         reject(new Error(msg))
       } else {
-        setTimeout(() => {
+        this.#robotAction = ERobotAction.MOVING_TO_DOCK
+        this.#gotoTimer = setTimeout(() => {
           if (this.#onGoToChargeResult !== undefined && typeof this.#onGoToChargeResult === 'function') {
             let res = { A: 0x000, M: '' }
             if (this.#options.failOnDock) {
               if (this.#options.criticalFailure) { res = { A: 0x001, M: 'Software Stop error' } } else { res = { A: 0x002, M: "Couldn't reach destination" } }
             }
+            this.#robotAction = ERobotAction.STOPPED
             this.#onGoToChargeResult(res)
           }
         }, this.#genLatencyMs())
         resolve()
       }
     })
+  }
+  
+  /**
+   * Stop the AMR and interrupt any of its ongoing Action
+   * @returns {Promise<boolean>}
+   */
+  StopMove() {
+    
+    //console.info("StopMove", this.#robotAction, this.#onGoToPoiResult, this.#onGoToChargeResult)
+    clearTimeout(this.#gotoTimer)
+    let res = {
+      A : 0x0CA,
+      D : 
+      {
+        A : 0x0CA,
+        M : ""
+      },
+      M : ""
+    }
+    switch( this.#robotAction )
+    {
+      case ERobotAction.MOVING_TO_POI:
+        
+        res.E = 0x0009
+        if (this.#onGoToPoiResult !== undefined && typeof this.#onGoToPoiResult === 'function')
+        {
+          //console.log("Canceling GOTO_POI", res);
+          this.#onGoToPoiResult(res)
+        }
+          
+      break
+
+      case ERobotAction.MOVING_TO_DOCK:
+        res.E = 0x0007
+        if (this.#onGoToChargeResult !== undefined && typeof this.#onGoToChargeResult === 'function')
+        {
+          //console.log("Canceling GOTO_DOCK", res);
+          this.#onGoToChargeResult(res)
+        }
+          
+      break
+    }
+    this.#robotAction = ERobotAction.STOPPED
+    return Promise.resolve(true)
   }
 
   /**

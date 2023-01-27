@@ -1,5 +1,7 @@
-import { WycaAPI, WycaWsClient } from '../node_modules/@wyca-robotics/lib-wyca-api/src/WycaAPI.js'
-// import { MockingClient } from '../node_modules/@wyca-robotics/wyca-tour-svc/src/lib/MockingClient.js'
+// import { WycaAPI, WycaWsClient } from '../node_modules/@wyca-robotics/lib-wyca-api/src/WycaAPI.js'
+
+import { MockingClient } from '../node_modules/@wyca-robotics/wyca-tour-svc/src/lib/MockingClient.js'
+
 import { TourPoi } from '../node_modules/@wyca-robotics/wyca-tour-svc/src/lib/TourPoi.js'
 import { TourSvc } from '../node_modules/@wyca-robotics/wyca-tour-svc/src/TourSvc.js'
 
@@ -12,12 +14,14 @@ const options = {
   failOnPoiId: -1, // Simulate a failure on its way to a POI'sid (-1 for none)
   failOnGotoPoiId: -1, // Simulate a failure when asking to go to a POI'sid (-1 for none)
   mapDataPath: "mock/map/map_data.json", // MapData json file to simulate the robot's current MapData
-  etaRange: { min: 50, max: 75 } // The ranged duration of goto (POI & Charge) actions'simulation.
+  etaRange: { min: 1000, max: 2000 } // The ranged duration of goto (POI & Charge) actions'simulation.
 }
 
-//const mc = new MockingClient(options)
-const wsClient = new WycaWsClient({ host: "ws://wyca.run:9094"})
-const mc = new WycaAPI(wsClient, { userKey: "5LGU.LaYMMncJaA0i42HwsX9ZX-RCNgj-9V17ROFXt71st" })
+const mc = new MockingClient(options)
+
+// const wsClient = new WycaWsClient({ host: "ws://wyca.run:9094"})
+// const mc = new WycaAPI(wsClient, { topKey: "zsEV6A4BdemVQefnoUj48fGwxeJbsYWChNEXKPcwHxaAIE" })
+
 const svc = new TourSvc(mc)
 
 document.addEventListener('DOMContentLoaded', onDocumentLoaded)
@@ -27,9 +31,9 @@ function onDocumentLoaded()
 {
   // Initialize the TourSvc with a list of TourPoi wich returns a Promise once the service is initialized
   let pois = []
-  pois.push(new TourPoi(89, "POI 1", "img/poi_1.png", "video/poi_1.mp4"))
-  pois.push(new TourPoi(90, "POI 2", "img/poi_2.png", "video/poi_2.mp4")) 
-  pois.push(new TourPoi(91, "POI 3", "img/poi_3.png", "video/poi_3.mp4"))
+  pois.push(new TourPoi(12, "POI 1", "img/poi_1.png", "video/poi_1.mp4"))
+  pois.push(new TourPoi(13, "POI 2", "img/poi_2.png", "video/poi_2.mp4")) 
+  pois.push(new TourPoi(14, "POI 3", "img/poi_3.png", "video/poi_3.mp4"))
   // Of course ToutPoi id must match the MapData's pois id_poi otherwise it will be rejected
 
   svc.init(pois)
