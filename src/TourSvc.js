@@ -97,6 +97,26 @@ export class TourSvc {
   }
 
   /**
+   * Cancels the AMR's tour and send the AMR to the next POI
+   * @returns {Promise<null>}
+   */
+  async skip () {
+    if (this.#moving === true)
+    {
+      console.warn("stoping robot's move !")
+      this.#client.StopMove()
+      return new Promise((resolve, reject) => {
+        if (this.#client.constructor.name == "MockingClient")
+          this.#client.onGoToPOIResult = () => resolve()
+        else
+          this.#client.onGoToPOIResult(() => resolve())
+      }).then(() => this.next())
+    }
+    else
+      return this.next()
+  }
+
+  /**
    *
    * @returns { TourPoi | null } the current POI or null
    */

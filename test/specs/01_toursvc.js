@@ -188,6 +188,28 @@ describe('TourSvc', () => {
 
   })
 
+  describe('#skip() moving', () => {
+    let svc
+    let pois
+    let mc
+    const jsonPath = __mockpath + '/map/map_data.json'
+
+    before(() => {
+      mc = new MockingClient({ mapDataPath: jsonPath})
+      pois = []
+      pois.push(new TourPoi(12, 'POI 12', '', ''))
+      pois.push(new TourPoi(13, 'POI 13', '', ''))
+      svc = new TourSvc(mc)
+      return svc.init(pois)
+    })
+
+    it('should resolve with the second POI', () => {
+      svc.next();
+      return expect(svc.skip()).to.eventually.be.deep.equal(pois[1])
+    })
+
+  })
+
   describe('#getCurrentPoi()', () => {
     let svc
     let pois
