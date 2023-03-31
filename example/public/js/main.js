@@ -1,6 +1,6 @@
-// import { WycaAPI, WycaWsClient } from '../node_modules/@wyca-robotics/lib-wyca-api/src/WycaAPI.js'
+import { WycaAPI, WycaWsClient } from '../node_modules/@wyca-robotics/lib-wyca-api/src/WycaAPI.js'
 
-import { MockingClient } from '../node_modules/@wyca-robotics/wyca-tour-svc/src/lib/MockingClient.js'
+//import { MockingClient } from '../node_modules/@wyca-robotics/wyca-tour-svc/src/lib/MockingClient.js'
 
 import { TourPoi } from '../node_modules/@wyca-robotics/wyca-tour-svc/src/lib/TourPoi.js'
 import { TourSvc } from '../node_modules/@wyca-robotics/wyca-tour-svc/src/TourSvc.js'
@@ -17,12 +17,13 @@ const options = {
   etaRange: { min: 1000, max: 2000 } // The ranged duration of goto (POI & Charge) actions'simulation.
 }
 
-const mc = new MockingClient(options)
-
-// const wsClient = new WycaWsClient({ host: "ws://wyca.run:9094"})
-// const mc = new WycaAPI(wsClient, { topKey: "zsEV6A4BdemVQefnoUj48fGwxeJbsYWChNEXKPcwHxaAIE" })
+// const mc = new MockingClient(options)
+const wsClient = new WycaWsClient({ host: "ws://wyca.run:9094"})
+const mc = new WycaAPI(wsClient, { topKey: "zsEV6A4BdemVQefnoUj48fGwxeJbsYWChNEXKPcwHxaAIE" })
 
 const svc = new TourSvc(mc)
+
+
 
 document.addEventListener('DOMContentLoaded', onDocumentLoaded)
 
@@ -31,9 +32,9 @@ function onDocumentLoaded()
 {
   // Initialize the TourSvc with a list of TourPoi wich returns a Promise once the service is initialized
   let pois = []
-  pois.push(new TourPoi(12, "POI 1", "img/poi_1.png", "video/poi_1.mp4"))
-  pois.push(new TourPoi(13, "POI 2", "img/poi_2.png", "video/poi_2.mp4")) 
-  pois.push(new TourPoi(14, "POI 3", "img/poi_3.png", "video/poi_3.mp4"))
+  pois.push(new TourPoi(90, "POI 1", "img/poi_1.png", "video/poi_1.mp4"))
+  pois.push(new TourPoi(91, "POI 2", "img/poi_2.png", "video/poi_2.mp4")) 
+  pois.push(new TourPoi(92, "POI 3", "img/poi_3.png", "video/poi_3.mp4"))
   // Of course ToutPoi id must match the MapData's pois id_poi otherwise it will be rejected
 
   svc.init(pois)
@@ -53,6 +54,7 @@ function bindBtn() {
   document.querySelector("#nextBtn").addEventListener("click", onNextBtnClick)
   document.querySelector("#cancelBtn").addEventListener("click", onCancelBtnClick)
   document.querySelector("#resumeBtn").addEventListener("click", onResumeBtnClick)
+  document.querySelector("#skipBtn").addEventListener("click", onSkipBtnClick)
 }
 // Go to next POI
 function onNextBtnClick()
@@ -70,7 +72,7 @@ function onNextBtnClick()
       }
       else
       {
-        console.log("Something's blocking the way, try again (Resume) ? Or skip to next POI (Next) ? or cancel the tour (Cancel) ?", failure)
+        console.log(failure.label)
       }
     })
 }
@@ -100,6 +102,20 @@ function onCancelBtnClick()
     .catch((failure) =>
     {
       console.log("AMR couldn't reach its docking station", failure)
+    })
+}
+
+// Stop the tour and send the AMR to its next destination
+function onSkipBtnClick()
+{
+  svc.skip()
+    .then(() =>
+    {
+      console.log("AMR skipped POI")
+    })
+    .catch((failure) =>
+    {
+      console.log("AMR couldn't reach POI", failure)
     })
 }
 

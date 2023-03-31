@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@wyca-robotics/wyca-tour-svc": "^0.0.4",
+    "@wyca-robotics/wyca-tour-svc": "^0.0.8",
     "http": "^0.0.1-security",
     "serve": "^14.1.2"
   }
