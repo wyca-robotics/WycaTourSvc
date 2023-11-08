@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { TourSvc } from '../../src/TourSvc.js'
@@ -16,6 +17,7 @@ describe('TourSvc', () => {
     it('should instantiate with MockingClient', () => {
       const mc = new MockingClient({ mapDataPath: __mockpath + '/map/map_data.json' })
       const svc = new TourSvc(mc)
+      assert(svc instanceof TourSvc)
     })
   })
 
@@ -154,7 +156,7 @@ describe('TourSvc', () => {
     const jsonPath = __mockpath + '/map/map_data.json'
 
     before(() => {
-      mc = new MockingClient({ mapDataPath: jsonPath})
+      mc = new MockingClient({ mapDataPath: jsonPath })
       pois = []
       pois.push(new TourPoi(12, 'POI 12', '', ''))
       svc = new TourSvc(mc)
@@ -164,7 +166,6 @@ describe('TourSvc', () => {
     it('should resolve going back to Docking station with null', () => {
       return expect(svc.cancel()).to.eventually.be.null
     })
-
   })
 
   describe('#cancel() moving', () => {
@@ -174,7 +175,7 @@ describe('TourSvc', () => {
     const jsonPath = __mockpath + '/map/map_data.json'
 
     before(() => {
-      mc = new MockingClient({ mapDataPath: jsonPath})
+      mc = new MockingClient({ mapDataPath: jsonPath })
       pois = []
       pois.push(new TourPoi(12, 'POI 12', '', ''))
       svc = new TourSvc(mc)
@@ -182,10 +183,9 @@ describe('TourSvc', () => {
     })
 
     it('should resolve going back to Docking station with null', () => {
-      svc.next();
+      svc.next()
       return expect(svc.cancel()).to.eventually.be.null
     })
-
   })
 
   describe('#skip() moving', () => {
@@ -195,7 +195,7 @@ describe('TourSvc', () => {
     const jsonPath = __mockpath + '/map/map_data.json'
 
     before(() => {
-      mc = new MockingClient({ mapDataPath: jsonPath})
+      mc = new MockingClient({ mapDataPath: jsonPath })
       pois = []
       pois.push(new TourPoi(12, 'POI 12', '', ''))
       pois.push(new TourPoi(13, 'POI 13', '', ''))
@@ -204,10 +204,9 @@ describe('TourSvc', () => {
     })
 
     it('should resolve with the second POI', () => {
-      svc.next();
+      svc.next()
       return expect(svc.skip()).to.eventually.be.deep.equal(pois[1])
     })
-
   })
 
   describe('#getCurrentPoi()', () => {
@@ -215,12 +214,11 @@ describe('TourSvc', () => {
     let pois
     let mc
     const jsonPath = __mockpath + '/map/map_data.json'
-    let poi1 = new TourPoi(12, 'POI 12', '', '')
-    let poi2 = new TourPoi(13, 'POI 13', '', '')
+    const poi1 = new TourPoi(12, 'POI 12', '', '')
+    const poi2 = new TourPoi(13, 'POI 13', '', '')
 
     before(() => {
-      mc = new MockingClient({ mapDataPath: jsonPath})
-      
+      mc = new MockingClient({ mapDataPath: jsonPath })
       pois = []
       pois.push(poi1)
       pois.push(poi2)
@@ -234,17 +232,17 @@ describe('TourSvc', () => {
 
     it('should return 1st poi after reaching poi 1', () => {
       return svc.next()
-      .then(() => assert.equal(svc.getCurrentPoi(), poi1))
+        .then(() => assert.equal(svc.getCurrentPoi(), poi1))
     })
 
     it('should return return 2nd poi after reaching poi 2', () => {
       return svc.next()
-      .then(() => assert.equal(svc.getCurrentPoi(), poi2))
+        .then(() => assert.equal(svc.getCurrentPoi(), poi2))
     })
 
-    it('should return null (Docking station) after docking' , () => {
+    it('should return null (Docking station) after docking', () => {
       return svc.next()
-      .then(() => assert.equal(svc.getCurrentPoi(), null))
+        .then(() => assert.equal(svc.getCurrentPoi(), null))
     })
   })
 
@@ -253,12 +251,11 @@ describe('TourSvc', () => {
     let pois
     let mc
     const jsonPath = __mockpath + '/map/map_data.json'
-    let poi1 = new TourPoi(12, 'POI 12', '', '')
-    let poi2 = new TourPoi(13, 'POI 13', '', '')
+    const poi1 = new TourPoi(12, 'POI 12', '', '')
+    const poi2 = new TourPoi(13, 'POI 13', '', '')
 
     before(() => {
-      mc = new MockingClient({ mapDataPath: jsonPath})
-      
+      mc = new MockingClient({ mapDataPath: jsonPath })
       pois = []
       pois.push(poi1)
       pois.push(poi2)
@@ -272,17 +269,17 @@ describe('TourSvc', () => {
 
     it('should return 2nd poi after reaching 1st poi', () => {
       return svc.next()
-      .then(() => assert.equal(svc.getNextPoi(), poi2))
+        .then(() => assert.equal(svc.getNextPoi(), poi2))
     })
 
     it('should return null (docking station) after reaching last poi', () => {
       return svc.next()
-      .then(() => assert.equal(svc.getNextPoi(), null))
+        .then(() => assert.equal(svc.getNextPoi(), null))
     })
 
-    it('should return 1st poi after docking' , () => {
+    it('should return 1st poi after docking', () => {
       return svc.next()
-      .then(() => assert.equal(svc.getNextPoi(), poi1))
+        .then(() => assert.equal(svc.getNextPoi(), poi1))
     })
   })
 })

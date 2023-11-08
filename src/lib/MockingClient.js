@@ -1,7 +1,7 @@
 export const ERobotAction = {
-  STOPPED: "Stopped",
-  MOVING_TO_POI: "Going to POI",
-  MOVING_TO_DOCK: "Going to Dock"
+  STOPPED: 'Stopped',
+  MOVING_TO_POI: 'Going to POI',
+  MOVING_TO_DOCK: 'Going to Dock'
 }
 
 export class MockingClient {
@@ -27,7 +27,7 @@ export class MockingClient {
     }
     this.#options = { ...opt, ...options }
     this.#mapData = {}
-    this.#gotoTimer = null;
+    this.#gotoTimer = null
     this.#robotAction = ERobotAction.STOPPED
   }
 
@@ -217,46 +217,38 @@ export class MockingClient {
       }
     })
   }
-  
+
   /**
    * Stop the AMR and interrupt any of its ongoing Action
    * @returns {Promise<boolean>}
    */
-  StopMove() {
-    
-    //console.info("StopMove", this.#robotAction, this.#onGoToPoiResult, this.#onGoToChargeResult)
+  StopMove () {
+    // console.info("StopMove", this.#robotAction, this.#onGoToPoiResult, this.#onGoToChargeResult)
     clearTimeout(this.#gotoTimer)
-    let res = {
-      A : 0x0CA,
-      D : 
-      {
-        A : 0x0CA,
-        M : ""
+    const res = {
+      A: 0x0CA,
+      D: {
+        A: 0x0CA,
+        M: ''
       },
-      M : ""
+      M: ''
     }
-    switch( this.#robotAction )
-    {
+    switch (this.#robotAction) {
       case ERobotAction.MOVING_TO_POI:
-        
         res.E = 0x0009
-        if (this.#onGoToPoiResult !== undefined && typeof this.#onGoToPoiResult === 'function')
-        {
-          //console.log("Canceling GOTO_POI", res);
+        if (this.#onGoToPoiResult !== undefined && typeof this.#onGoToPoiResult === 'function') {
+          // console.log("Canceling GOTO_POI", res);
           this.#onGoToPoiResult(res)
         }
-          
-      break
+        break
 
       case ERobotAction.MOVING_TO_DOCK:
         res.E = 0x0007
-        if (this.#onGoToChargeResult !== undefined && typeof this.#onGoToChargeResult === 'function')
-        {
-          //console.log("Canceling GOTO_DOCK", res);
+        if (this.#onGoToChargeResult !== undefined && typeof this.#onGoToChargeResult === 'function') {
+          // console.log("Canceling GOTO_DOCK", res);
           this.#onGoToChargeResult(res)
         }
-          
-      break
+        break
     }
     this.#robotAction = ERobotAction.STOPPED
     return Promise.resolve(true)

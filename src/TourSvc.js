@@ -81,19 +81,17 @@ export class TourSvc {
    * @returns {Promise<null>}
    */
   async cancel () {
-    if (this.#moving === true)
-    {
+    if (this.#moving === true) {
       console.warn("Canceling robot's move !")
       this.#client.StopMove()
       return new Promise((resolve, reject) => {
-        if (this.#client.constructor.name == "MockingClient")
+        if (this.#client.constructor.name === 'MockingClient') {
           this.#client.onGoToPOIResult = () => resolve()
-        else
+        } else {
           this.#client.onGoToPOIResult(() => resolve())
+        }
       }).then(() => this.#createGoToChargePromise())
-    }
-    else
-      return this.#createGoToChargePromise()
+    } else { return this.#createGoToChargePromise() }
   }
 
   /**
@@ -101,19 +99,17 @@ export class TourSvc {
    * @returns {Promise<null>}
    */
   async skip () {
-    if (this.#moving === true)
-    {
+    if (this.#moving === true) {
       console.warn("stoping robot's move !")
       this.#client.StopMove()
       return new Promise((resolve, reject) => {
-        if (this.#client.constructor.name == "MockingClient")
+        if (this.#client.constructor.name === 'MockingClient') {
           this.#client.onGoToPOIResult = () => resolve()
-        else
+        } else {
           this.#client.onGoToPOIResult(() => resolve())
+        }
       }).then(() => this.next())
-    }
-    else
-      return this.next()
+    } else { return this.next() }
   }
 
   /**
@@ -187,8 +183,7 @@ export class TourSvc {
     // TODO: list critical answer codes
     const criticalCodes = [0x001]
     const critical = criticalCodes.includes(res.A)
-    if (res.A === 0x0ca)
-      res.M = "Action canceled by user"
+    if (res.A === 0x0ca) { res.M = 'Action canceled by user' }
     return new TourFailure(res.M, critical)
   }
 
@@ -215,10 +210,11 @@ export class TourSvc {
     return this.#client.GoToPOI(this.#pois[index].id)
       .then(() => {
         this.#currentPoiIndex = index
-        if (this.#client.constructor.name == "MockingClient")
+        if (this.#client.constructor.name === 'MockingClient') {
           this.#client.onGoToPoiResult = cb
-        else 
+        } else {
           this.#client.onGoToPOIResult(cb)
+        }
         return this.#createGoToPromise()
       })
       .catch((err) => {
@@ -235,12 +231,13 @@ export class TourSvc {
     return this.#client.GoToCharge(-1)
       .then(() => {
         this.#currentPoiIndex = -1
-        if (this.#client.constructor.name == "MockingClient")
+        if (this.#client.constructor.name === 'MockingClient') {
           this.#client.onGoToChargeResult = cb
-        else
+        } else {
           this.#client.onGoToChargeResult(cb)
+        }
         return this.#createGoToPromise()
-      })          
+      })
       .catch((err) => {
         return Promise.reject(err)
       })

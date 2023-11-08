@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 // import { strict as assert } from 'assert'
@@ -13,6 +14,7 @@ describe('MockingClient', () => {
   describe('constructor', () => {
     it('should instantiate without options', () => {
       const mc = new MockingClient()
+      assert(mc instanceof MockingClient)
     })
 
     it('should instantiate with options', () => {
@@ -26,6 +28,7 @@ describe('MockingClient', () => {
           mapDataPath: ''
         }
       )
+      assert(mc instanceof MockingClient)
     })
   })
 
@@ -148,11 +151,10 @@ describe('MockingClient', () => {
         done()
       }
     })
-    
   })
 
   describe('StopMove GotoPOI', () => {
-    const mc = new MockingClient( {etaRange: {min: 200, max: 250}})
+    const mc = new MockingClient({ etaRange: { min: 200, max: 250 } })
 
     before(() => {
       return mc.GoToPOI(1)
@@ -162,14 +164,14 @@ describe('MockingClient', () => {
       mc.onGoToPoiResult = (r) => {
         // console.info("gotopoi",r)
         assert.deepEqual(r, {
-          A : 0x0CA,
-          D : 
+          A: 0x0CA,
+          D:
           {
-            A : 0x0CA,
-            M : ""
+            A: 0x0CA,
+            M: ''
           },
-          M : "",
-          E:9
+          M: '',
+          E: 9
         })
         done()
       }
@@ -178,7 +180,7 @@ describe('MockingClient', () => {
   })
 
   describe('StopMove GotoCharge', () => {
-    const mc = new MockingClient( {etaRange: {min: 200, max: 250}})
+    const mc = new MockingClient({ etaRange: { min: 200, max: 250 } })
 
     before(() => {
       return mc.GoToCharge(-1)
@@ -188,19 +190,17 @@ describe('MockingClient', () => {
       mc.onGoToChargeResult = (r) => {
         // console.info("gotocharge", r)
         assert.deepEqual(r, {
-          A : 0x0CA,
-          D : 
-          { 
-            A : 0x0CA,
-            M : ""
+          A: 0x0CA,
+          D: {
+            A: 0x0CA,
+            M: ''
           },
-          M : "",
-          E:7
+          M: '',
+          E: 7
         })
         done()
       }
       setTimeout(() => mc.StopMove(), 100)
-      
     })
   })
 })
