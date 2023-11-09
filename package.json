@@ -1,13 +1,12 @@
 {
   "name": "@wyca-robotics/wyca-tour-svc",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A simple AMR touring service",
   "type": "module",
   "main": "src/TourSvc.js",
   "scripts": {
     "lint": "eslint --fix src",
-    "test": "mocha --require @babel/register test/setup.js test/specs",
-    "server": "node ./example"
+    "test": "mocha --require @babel/register test/setup.js test/specs"
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",

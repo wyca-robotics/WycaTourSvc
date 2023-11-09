@@ -52,10 +52,7 @@ function onDocumentLoaded()
         console.log("Uho ! Something went wrong.", failure)
     })
 }
-
 ```
-
-
 
 Once the service is initalized you can ask the AMR to go to its next destination, it will return a Promise that resolves with the readched POI or NULL if there is no more POI to go next and will go back to its docking station for charging.
 
@@ -75,6 +72,7 @@ svc.next()
     }
 })
 ```
+
 if the failure wasn't critical you can ask to resume its interupted journey, a new promise is returned like the next method.
 
 ```js
@@ -88,4 +86,4 @@ svc.resume()
 ```
 
 #Version
-0.0.8
+0.0.9
